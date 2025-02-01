@@ -1,0 +1,113 @@
+.selectContainer {
+  position: relative;
+  width: 100%;
+}
+
+.selectTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 12px;
+  font-size: 14px;
+  color: white;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.selectTrigger:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.selectTrigger:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.2);
+}
+
+.selectTriggerDisabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.selectContent {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  min-width: 8rem;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  animation: fadeInZoom 0.3s ease-in-out;
+}
+
+.selectScrollButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s ease-in-out;
+  cursor: default;
+}
+
+.selectScrollButton:hover {
+  color: white;
+}
+
+.selectItem {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 8px 6px 32px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.selectItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.selectItemSelected {
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.selectItemDisabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.selectLabel {
+  padding: 6px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeInZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

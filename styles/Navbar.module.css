@@ -1,0 +1,194 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background-color: #0a0a0a;
+  color: white;
+  height: auto;
+}
+
+
+/* Heading */
+.heading {
+  position: relative;
+  display: flex;
+  justify-content: flex-start; 
+  align-items: center; 
+  width: 40%;
+  padding: 0 1rem;
+}
+
+.headingContent {
+  font-size: 1.5rem;
+  font-weight: bold;
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.headingEffect {
+  position: absolute;
+  top: 50%;
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  filter: blur(1rem);
+  /* background: radial-gradient(ellipse, #f87171, #fbbf24, #60a5fa); */
+  background: radial-gradient(
+    ellipse,
+    #f87171 0%,
+    #fbbf24 33%,
+    #60a5fa 66%,
+    #f87171 100%
+  );
+  animation: gradient 5s linear infinite;
+  background-size: 300% 100%;
+  z-index: -1;
+  height: 50%; 
+  width: 120%; 
+}
+
+
+/* Login Button */
+.loginButton{
+  position: relative;
+  border: none;
+} 
+
+.loginButtonContent{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem; 
+  background-color: #0a0a0a;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  position: relative;
+  z-index: 10;
+  color: white;
+}
+
+
+.loginGithubIcon{
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.loginButtonEffect {
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: transparent;
+  border: 2px solid transparent;
+  background: linear-gradient(
+    90deg,
+    #f87171 0%,
+    #fbbf24 33%,
+    #60a5fa 66%,
+    #f87171 100%
+  );
+  background-size: 300% 100%;
+  animation: gradient 5s linear infinite;
+  padding: 2px;
+  filter: blur(0.3rem);
+}
+
+/* Navbar Profile */
+.navProfileContainer{
+  display: flex;
+  justify-content: space-between;
+  width: 100% ;
+}
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.userProfile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: var(--primary-color, #007bff); 
+  border-radius: 2px;
+}
+
+.profilePic {
+  height: 3rem; 
+  width: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.userName {
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+}
+
+.userRoll {
+  font-size: 0.9rem;
+  color: white;
+}
+
+.navProfile{
+  display: flex;
+  height: 100%;
+  gap: 0.5rem;
+}
+
+.profileName{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.1rem;
+}
+
+.rank{
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.points{
+  font-size: 0.6rem;
+  padding: 0.1rem 0.5rem;
+  border: 1px solid white;
+  border-radius: 30px;
+}
+
+.badge{
+  width: 3.5rem;
+  height: auto;
+  filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
+  
+}
+
+
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 150% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+  
+
+
+  

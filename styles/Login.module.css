@@ -1,0 +1,137 @@
+.container {
+    min-height: 100vh;
+    background: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .background {
+    position: absolute;
+    inset: 0;
+    background: black;
+  }
+  
+  .header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .title {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(to right, white, rgba(255, 255, 255, 0.5));
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  
+  .subtitle {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .loginBox {
+    position: relative;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 2rem;
+    width: 24rem;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .alert {
+    margin-bottom: 1.5rem;
+    background: rgba(255, 0, 0, 0.1);
+    border-color: rgba(255, 0, 0, 0.2);
+    color: rgba(255, 100, 100, 0.8);
+  }
+  
+  .inputGroup {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+  
+  .focusIndicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: linear-gradient(to top right, transparent, white 50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .visible {
+    opacity: 0.5;
+  }
+  
+  .selectTrigger {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .selectContent {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .selectItem {
+    color: white;
+    transition: background 0.2s;
+  }
+  
+  .button {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  
+  .button:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .loader {
+    margin-right: 0.5rem;
+  }
+  
+  .icon {
+    margin-right: 0.5rem;
+  }
+  
+  .footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.4);
+  }
+  

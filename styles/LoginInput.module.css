@@ -1,0 +1,97 @@
+.inputContainer {
+  position: relative;
+  width: 100%;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  z-index: 1; /* Ensure it's not hidden behind other elements */
+}
+
+.inputField {
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: white;
+  transition: all 0.3s ease-in-out;
+  outline: none;
+  backdrop-filter: blur(4px);
+  position: relative; /* Ensure the input is positioned properly */
+  z-index: 2; /* Bring input above other elements */
+}
+
+.inputField::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.inputField:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.errorInput {
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-in-out;
+  pointer-events: none;
+  color: rgba(255, 255, 255, 0.4);
+  z-index: 0; /* Ensure the label is not on top of the input */
+}
+
+.labelFocused {
+  top: 10px;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.requiredMark {
+  color: rgba(239, 68, 68, 1);
+  margin-left: 4px;
+}
+
+.iconContainer {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.3s ease-in-out;
+  z-index: 2; /* Make sure icon is above other elements */
+}
+
+.iconFocused {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.iconError {
+  color: rgba(239, 68, 68, 1);
+}
+
+.errorMessage {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  color: rgba(239, 68, 68, 1);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Ensure input field is clickable */
+.inputField, .inputWrapper {
+  pointer-events: auto;
+}
+
+.background,
+.focusRing,
+.focusBlur {
+  pointer-events: none;
+}
