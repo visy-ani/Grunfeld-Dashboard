@@ -57,6 +57,7 @@ const LoginPage: React.FC = () => {
       console.log('Login data:', formData);
     } catch (err) {
       setError('An error occurred. Please try again.');
+      console.log(err)
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +117,7 @@ const LoginPage: React.FC = () => {
         </Select>
         <LoginButton
           onClick={handleGithubLogin}
-          disabled={isLoading}
+          isLoading={isLoading}
           className={styles.button}
         >
           {isLoading ? (
