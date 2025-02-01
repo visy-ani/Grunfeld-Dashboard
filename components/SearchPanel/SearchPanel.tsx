@@ -6,11 +6,11 @@ import Input from "@/ui/Input";
 import Button from "@/ui/Button";
 import { Search, Filter, Github } from "lucide-react";
 import Checkbox from "@/ui/CheckBox";
-// import Bronze from "@/ui/Badges/Common";
-// import Rare from "@/ui/Badges/Rare"
-// import Epic from "@/ui/Badges/Epic";
-import Link from "next/link";
+import Common from "@/ui/Badges/Common";
+import Rare from "@/ui/Badges/Rare"
+import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
+import Link from "next/link";
 
 interface User {
   id: number;
@@ -27,6 +27,13 @@ interface FilterState {
   academicYears: number[];
   pointsRanges: string[];
 }
+
+const getBadgeComponent = (points: number, rank: number) => {
+  if (rank === 1) return <Legendary />;
+  if (rank === 2) return <Epic />;
+  if (rank === 3) return <Rare />;
+  return <Common />;
+};
 
 const sampleUsers: User[] = [
   {
@@ -59,6 +66,37 @@ const sampleUsers: User[] = [
     profileImage: "/api/placeholder/100/100",
     githubProfile: "https://github.com/mikejohnson",
   },
+  {
+    id: 4,
+    name: "Mike Johnson",
+    username: "mike_johnson",
+    rollNumber: "10367",
+    academicYear: 2024,
+    points: 1100,
+    profileImage: "/api/placeholder/100/100",
+    githubProfile: "https://github.com/mikejohnson",
+  },
+  {
+    id: 5,
+    name: "Mike Johnson",
+    username: "mike_johnson",
+    rollNumber: "10367",
+    academicYear: 2024,
+    points: 1100,
+    profileImage: "/api/placeholder/100/100",
+    githubProfile: "https://github.com/mikejohnson",
+  },
+  {
+    id: 6,
+    name: "Mike Johnson",
+    username: "mike_johnson",
+    rollNumber: "10367",
+    academicYear: 2024,
+    points: 1100,
+    profileImage: "/api/placeholder/100/100",
+    githubProfile: "https://github.com/mikejohnson",
+  },
+  
 ];
 
 const SearchPanel: React.FC = () => {
@@ -175,18 +213,10 @@ const SearchPanel: React.FC = () => {
         <div className={styles.headerPoints}>Points</div>
       </div>
 
-      {filteredUsers.map((user) => (
+      {filteredUsers.map((user,index) => (
         <div key={user.id} className={styles.userRow}>
-          {/* <Image
-            src={user.profileImage}
-            alt={`${user.name}'s profile`}
-            className={styles.profileImage}
-            width={100}
-            height={100}
-            priority
-          /> */}
           <div className={styles.badge}>
-            <Legendary />
+          {getBadgeComponent(user.points, index + 1)}
           </div>
           <div className={styles.profileDetails}>
             <Link
