@@ -2,9 +2,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import Image from "next/image";
+import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
-import { supabase } from "@/lib/supabaseClient";
+import { auth, db } from "@/lib/firebaseClient";
+import { doc, getDoc } from "firebase/firestore";
 import styles from "@/styles/Navbar.module.css";
 
 interface Profile {
@@ -22,21 +25,11 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (user) {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-
-        if (error) {
-          console.error("Error fetching profile:", error);
-        } else if (data) {
-          setProfile(data as Profile);
+      if (auth.currentUser) {
+        const userRef = doc(db, "profiles", auth.currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setProfile({ id: userSnap.id, ...userSnap.data() } as Profile);
         }
       }
     };
@@ -53,9 +46,7 @@ const Navbar: React.FC = () => {
         </span>
       </h1>
 
-      {!profile ? (
-        <></>
-      ) : (
+      {profile && (
         <div className={styles.navProfileContainer}>
           <div className={styles.userProfile}>
             <Image

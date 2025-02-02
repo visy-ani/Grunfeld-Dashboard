@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
 import styles from "@/styles/SearchPanel.module.css";
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
@@ -11,10 +12,11 @@ import Common from "@/ui/Badges/Common";
 import Rare from "@/ui/Badges/Rare";
 import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
-import { supabase } from "@/lib/supabaseClient";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebaseClient";
 
 interface User {
-  id: number;
+  id: string;
   name: string;
   username: string;
   rollNumber: string;
@@ -70,24 +72,25 @@ const SearchPanel: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data, error } = await supabase.from("profiles").select("*");
-        if (error) {
-          console.error("Error fetching users:", error);
-        } else if (data) {
-          const mappedUsers: User[] = data.map((item) => ({
-            id: item.id,
-            name: item.name,
-            username: item.username,
-            rollNumber: item.roll_number,
-            academicYear: Number(item.academic_year),
-            points: item.points,
-            profileImage: item.profile_image,
-            githubProfile: item.github_profile,
-          }));
-          setUsers(mappedUsers);
-        }
+        const profilesRef = collection(db, "profiles");
+        const querySnapshot = await getDocs(profilesRef);
+        const usersList: User[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          usersList.push({
+            id: doc.id,
+            name: data.name,
+            username: data.username || "", // if available
+            rollNumber: data.roll_number,
+            academicYear: Number(data.academic_year),
+            points: data.points,
+            profileImage: data.profile_image,
+            githubProfile: data.github_profile,
+          });
+        });
+        setUsers(usersList);
       } catch (error) {
-        console.error("Unexpected error:", error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -125,11 +128,9 @@ const SearchPanel: React.FC = () => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
-
       const matchesAcademicYear =
         filters.academicYears.length === 0 ||
         filters.academicYears.includes(user.academicYear);
-
       const matchesPointsRange =
         filters.pointsRanges.length === 0 ||
         filters.pointsRanges.some((range) => {
@@ -144,7 +145,6 @@ const SearchPanel: React.FC = () => {
               return false;
           }
         });
-
       return matchesSearch && matchesAcademicYear && matchesPointsRange;
     });
   }, [users, searchTerm, filters]);

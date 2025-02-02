@@ -1,4 +1,4 @@
-// pages/login.tsx or app/login/page.tsx (depending on your Next.js version)
+// pages/login.tsx or app/login/page.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -6,11 +6,19 @@ import styles from "@/styles/Login.module.css";
 import { Alert, AlertDescription } from "@/ui/Alert";
 import LoginButton from "@/ui/LoginButton";
 import Input from "@/ui/LoginInput";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/Select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/Select";
 import { Github, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { auth } from "@/lib/firebaseClient";
+import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
-const academicYears = ['First Year', 'Second Year', 'Third Year', 'Fourth Year'];
+const academicYears = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
 const LoginPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +29,12 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     const { name, value } = e.target;
-    if (name === "rollNumber" && value.length > 6) {
-      return;
-    }
+    if (name === "rollNumber" && value.length > 6) return;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -51,34 +58,30 @@ const LoginPage: React.FC = () => {
   const handleGithubLogin = async () => {
     if (!validateForm()) return;
 
-    // Store form data in localStorage for use in the AuthProvider on first login
+    // Store extra form data in localStorage for AuthProvider use.
     localStorage.setItem("userFormData", JSON.stringify(formData));
 
     setIsLoading(true);
     try {
-      // Initiate GitHub OAuth sign-in with a redirectTo pointing to your dashboard
-      const { error: signInError } = await supabase.auth.signInWithOAuth({
-        provider: "github",
-        options: {
-          redirectTo: "https://grunfeld-project.vercel.app/dashboard",
-        },
-      });
-      if (signInError) {
-        setError("Error initiating GitHub login: " + signInError.message);
-        setIsLoading(false);
-        return;
-      }
-      // The user is redirected to GitHub for authentication.
-    } catch (err) {
+      const provider = new GithubAuthProvider();
+      // Optionally, add scopes:
+      provider.addScope("read:user");
+      provider.addScope("user:email");
+
+      // Sign in with popup
+      const result = await signInWithPopup(auth, provider);
+      // After successful login, redirect to dashboard
+      router.push("/dashboard");
+    } catch (err: any) {
       console.error(err);
-      setError("An unexpected error occurred. Please try again.");
+      setError("Error signing in with GitHub: " + err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Set viewport height CSS variable for mobile (optional)
   useEffect(() => {
+    // Adjust viewport height for mobile if needed.
     const setVh = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);

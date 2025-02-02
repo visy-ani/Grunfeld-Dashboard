@@ -2,7 +2,15 @@
 "use client";
 
 import { useEffect } from "react";
-import {supabase} from "@/lib/supabaseClient";
+import { auth, db } from "@/lib/firebaseClient";
+import { onAuthStateChanged } from "firebase/auth";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -10,77 +18,54 @@ interface AuthProviderProps {
 
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
-    async function upsertUserProfile() {
-      // Get the currently authenticated user
-      const { data: { user } } = await supabase.auth.getUser();
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Extract GitHub info from user metadata
-        const githubUsername =
-          user.user_metadata.preferred_username || user.user_metadata.login;
-        const githubProfileUrl = githubUsername
-          ? `https://github.com/${githubUsername}`
-          : null;
-        const avatarUrl = user.user_metadata.avatar_url || null;
-
-        // Retrieve any extra form data stored before the OAuth redirect (only available at first login)
+        // Get GitHub data from user object.
+        // Firebase Auth user object may contain additional info in providerData.
+        const providerData = user.providerData[0]; // GitHub provider data
+        const githubUsername = providerData?.displayName || providerData?.email || "";
+        const githubPhotoURL = providerData?.photoURL || "";
+        // Retrieve extra form data (if any) stored during login
         const storedFormData = localStorage.getItem("userFormData");
         const extraData = storedFormData ? JSON.parse(storedFormData) : null;
 
-        // Fetch the existing profile record (if any)
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
+        // Reference to the user profile document
+        const userRef = doc(db, "profiles", user.uid);
+        const userSnap = await getDoc(userRef);
 
-        // Build the update object:
-        // - If extraData exists (first login), use its values.
-        // - Otherwise, fall back to the existing profile values.
-        const updateData = {
-          id: user.id,
-          name:
-            (extraData && extraData.name) ||
-            user.user_metadata.full_name ||
-            (existingProfile && existingProfile.name) ||
-            "",
-          github_profile: githubProfileUrl || (existingProfile && existingProfile.github_profile) || "",
-          roll_number:
-            (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
-              ? extraData.rollNumber
-              : existingProfile && existingProfile.roll_number) || "",
-          academic_year:
-            (extraData && extraData.academicYear && extraData.academicYear.trim() !== ""
-              ? extraData.academicYear
-              : existingProfile && existingProfile.academic_year) || "",
-          points:
-            (extraData && extraData.points !== undefined
-              ? extraData.points
-              : existingProfile && existingProfile.points) || 0,
-          profile_image: avatarUrl || (existingProfile && existingProfile.profile_image) || "",
+        // Build update object. Use extraData if available (first login) else existing values.
+        const updateData: any = {
+          name: (extraData && extraData.name) || providerData?.displayName || (userSnap.exists() ? userSnap.data().name : ""),
+          github_profile: `https://github.com/${githubUsername}`, // You might adjust this if you have the actual username.
+          roll_number: (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
+            ? extraData.rollNumber
+            : userSnap.exists() ? userSnap.data().roll_number : ""),
+          academic_year: (extraData && extraData.academicYear && extraData.academicYear.trim() !== ""
+            ? extraData.academicYear
+            : userSnap.exists() ? userSnap.data().academic_year : ""),
+          points: userSnap.exists() ? userSnap.data().points || 0 : 0,
+          profile_image: githubPhotoURL || (userSnap.exists() ? userSnap.data().profile_image : ""),
+          lastLogin: serverTimestamp(),
         };
 
-        const { error } = await supabase.from("profiles").upsert(updateData);
-        if (error) {
-          console.error("Error saving profile data:", error);
-        } else if (storedFormData) {
-          // Clear stored form data after the first login upsert
+        // If document exists, update; otherwise, create new document.
+        if (userSnap.exists()) {
+          await updateDoc(userRef, updateData);
+        } else {
+          await setDoc(userRef, {
+            ...updateData,
+            createdAt: serverTimestamp(),
+          });
+        }
+
+        // Clear stored extra form data after first login update.
+        if (storedFormData) {
           localStorage.removeItem("userFormData");
         }
       }
-    }
+    });
 
-    // Listen to authentication state changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session?.user) {
-          await upsertUserProfile();
-        }
-      }
-    );
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   return <>{children}</>;
