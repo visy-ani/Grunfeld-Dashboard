@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import styles from '@/styles/dashboard.module.css';
 import supabase from '@/lib/supabaseClient';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+
 
 // Define the Profile interface based on your Supabase table
 interface Profile {
@@ -40,7 +41,8 @@ const Dashboard: React.FC = () => {
     };
 
     fetchProfiles();
-  }, [router.asPath]);
+    router.refresh();
+  }, [router]);
 
   // Optionally, show a loading state or error message before the profiles are loaded
   if (loading) return <div className={styles.loading}>Loading profiles...</div>;
