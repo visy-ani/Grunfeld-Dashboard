@@ -66,7 +66,7 @@ const LoginPage: React.FC = () => {
         provider: 'github',
         options: {
           // Ensure this URL exactly matches one of the callback URLs in your GitHub app settings.
-          redirectTo: 'http://localhost:3000/dashboard'
+          redirectTo: 'https://grunfeld-project.vercel.app/dashboard'
         },
         // Optional: specify a redirect URL if needed (e.g., redirectTo: 'http://localhost:3000/dashboard')
       });
@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
         return;
       }
       // At this point, the user is redirected to GitHub for authentication.
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
