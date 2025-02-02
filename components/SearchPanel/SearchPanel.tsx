@@ -206,13 +206,19 @@ const SearchPanel: React.FC = () => {
             {getBadgeComponent(user.points, index + 1)}
           </div> 
           <div className={styles.profileDetails}>
-            <Link
+            {/* <Link
               href={`/profile/${user.username}`}
               className={styles.userInfo}
             >
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
-            </Link>
+            </Link> */}
+            <div
+              className={styles.userInfo}
+            >
+              <span className={styles.userName}>{user.name}</span>
+              <span className={styles.userHierarchy}>{user.rollNumber}</span>
+            </div>
             <a
               href={user.githubProfile}
               target="_blank"

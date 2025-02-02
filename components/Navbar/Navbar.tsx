@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
+// import Link from "next/link";
 import Image from "next/image";
-import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
 import supabase from "@/lib/supabaseClient";
 import styles from "@/styles/Navbar.module.css";
@@ -62,7 +61,9 @@ const Navbar: React.FC = () => {
         <></>
       ) : (
         <div className={styles.navProfileContainer}>
-          <Link href={`/profile/${profile.id}`} className={styles.userProfile}>
+
+          {/* Clickable Profile */}
+          {/* <Link href={`/profile/${profile.id}`} className={styles.userProfile}>
             <Image
               src={
                 profile.profile_image ||
@@ -79,7 +80,25 @@ const Navbar: React.FC = () => {
               <span className={styles.userName}>{profile.name}</span>
               <span className={styles.userRoll}>{profile.roll_number}</span>
             </div>
-          </Link>
+          </Link> */}
+
+
+          <div className={styles.userProfile}>
+            <Image
+              src={
+                profile.profile_image ||
+                "https://avatar.iran.liara.run/public"
+              }
+              alt="User Profile"
+              className={styles.profilePic}
+              width={100}
+              height={100}
+            />
+            <div className={styles.userInfo}>
+              <span className={styles.userName}>{profile.name}</span>
+              <span className={styles.userRoll}>{profile.roll_number}</span>
+            </div>
+          </div>
           <div className={styles.navProfile}>
             <div className={styles.profileName}>
               <span className={styles.rank}>Trainee</span>

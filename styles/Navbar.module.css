@@ -274,9 +274,11 @@
   
   .userName {
     font-size: 0.9rem;
+    cursor: default;
   }
   
   .userRoll {
     font-size: 0.8rem;
+    cursor: default;
   }
 }
