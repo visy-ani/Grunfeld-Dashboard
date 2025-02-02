@@ -17,6 +17,7 @@ import { Github, Loader2 } from "lucide-react";
 import { auth } from "@/lib/firebaseClient";
 import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation";
+// import { console } from "inspector";
 
 const academicYears = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
@@ -70,11 +71,12 @@ const LoginPage: React.FC = () => {
 
       // Sign in with popup
       const result = await signInWithPopup(auth, provider);
+      console.log(result);
       // After successful login, redirect to dashboard
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError("Error signing in with GitHub: " + err.message);
+      setError("Error signing in with GitHub: " + err);
     } finally {
       setIsLoading(false);
     }
