@@ -6,6 +6,7 @@ import Image from "next/image";
 import Bronze from "@/ui/Badges/Common";
 import supabase from "@/lib/supabaseClient";
 import styles from "@/styles/Navbar.module.css";
+import {useRouter} from "next/router";
 
 interface Profile {
   id: string;
@@ -19,6 +20,7 @@ interface Profile {
 
 const Navbar: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -44,7 +46,7 @@ const Navbar: React.FC = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [router.asPath]);
 
   return (
     <nav className={styles.navbar}>
