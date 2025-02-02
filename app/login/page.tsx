@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import styles from '@/styles/Login.module.css'
+import styles from '@/styles/Login.module.css';
 import { Alert, AlertDescription } from '@/ui/Alert';
-import LoginButton from '@/ui/LoginButton'
-import Input from '@/ui/LoginInput'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/Select"
+import LoginButton from '@/ui/LoginButton';
+import Input from '@/ui/LoginInput';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/Select";
 import { Github, Loader2 } from 'lucide-react';
+import supabase from '@/lib/supabaseClient';
 
 const academicYears = ['First Year', 'Second Year', 'Third Year', 'Fourth Year'];
 
@@ -20,6 +21,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
+  // Handle text input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     const { name, value } = e.target;
@@ -31,11 +33,13 @@ const LoginPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Handle academic year selection changes
   const handleAcademicYearChange = (value: string) => {
     setError('');
     setFormData((prev) => ({ ...prev, academicYear: value }));
   };
 
+  // Validate that all fields are filled and roll number is exactly 6 characters
   const validateForm = (): boolean => {
     if (!formData.name || !formData.rollNumber || !formData.academicYear) {
       setError('Please fill in all fields');
@@ -48,16 +52,33 @@ const LoginPage: React.FC = () => {
     return true;
   };
 
+  // Handle GitHub login flow via Supabase OAuth
   const handleGithubLogin = async () => {
     if (!validateForm()) return;
 
+    // Save the form data in localStorage so it can be retrieved after the OAuth redirect.
+    localStorage.setItem('userFormData', JSON.stringify(formData));
+
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Login data:', formData);
-    } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.log(err)
+      // Initiate GitHub OAuth sign-in
+      const { error: signInError } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          // Ensure this URL exactly matches one of the callback URLs in your GitHub app settings.
+          redirectTo: 'http://localhost:3000/dashboard'
+        },
+        // Optional: specify a redirect URL if needed (e.g., redirectTo: 'http://localhost:3000/dashboard')
+      });
+      if (signInError) {
+        setError('Error initiating GitHub login: ' + signInError.message);
+        setIsLoading(false);
+        return;
+      }
+      // At this point, the user is redirected to GitHub for authentication.
+    } catch (err: any) {
+      console.error(err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +151,9 @@ const LoginPage: React.FC = () => {
             </>
           )}
         </LoginButton>
-        <p className={styles.footer}>By logging in, you agree to our Terms of Service and Privacy Policy</p>
+        <p className={styles.footer}>
+          By logging in, you agree to our Terms of Service and Privacy Policy
+        </p>
       </div>
     </div>
   );
