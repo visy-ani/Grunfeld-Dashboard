@@ -1,12 +1,52 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import styles from "@/styles/Navbar.module.css";
+import Image from "next/image";
 import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
-import Image from "next/image";
+import supabase from "@/lib/supabaseClient";
+import styles from "@/styles/Navbar.module.css";
 
-const Navbar = ({ isLoggedIn = true, username = "John Doe", rollNumber=10357, points = 999, profilePic="https://avatar.iran.liara.run/public" }) => {
+// Define the profile interface (adjust field names if needed)
+interface Profile {
+  id: string;
+  name: string;
+  roll_number: string;
+  academic_year: string;
+  github_profile: string;
+  profile_image?: string;
+  points: number;
+}
+
+const Navbar: React.FC = () => {
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      // Get the currently authenticated user
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        // Query the profiles table for this user's profile using their Supabase Auth id
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (error) {
+          console.error("Error fetching profile:", error);
+        } else if (data) {
+          setProfile(data as Profile);
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   return (
     <nav className={styles.navbar}>
@@ -17,37 +57,33 @@ const Navbar = ({ isLoggedIn = true, username = "John Doe", rollNumber=10357, po
         </span>
       </h1>
 
-      {/* Conditional rendering based on user login status */}
-      {!isLoggedIn ? (
-        <button className={styles.loginButton}>
-          <div className={styles.loginButtonContent}>
-            Login
-            <Github className={styles.loginGithubIcon} />
-          </div>
-
-          {/* Button Effect */}
-          <div className={styles.loginButtonEffect}></div>
-        </button>
+      {/* If no profile is loaded, show the Login button */}
+      {!profile ? (
+        <></>
       ) : (
         <div className={styles.navProfileContainer}>
-          <Link href={`profile/${username}`} className={styles.userProfile}>
+          <Link href={`/profile/${profile.id}`} className={styles.userProfile}>
             <Image
-              src={profilePic}
+              src={
+                profile.profile_image ||
+                "https://avatar.iran.liara.run/public"
+              }
               alt="User Profile"
               className={styles.profilePic}
               width={100}
               height={100}
-              layout="intrinsic"
+              // For Next.js 13, you might remove layout if using the new Image component API
+              // layout="intrinsic"
             />
             <div className={styles.userInfo}>
-              <span className={styles.userName}>{username}</span>
-              <span className={styles.userRoll}>{rollNumber}</span>
+              <span className={styles.userName}>{profile.name}</span>
+              <span className={styles.userRoll}>{profile.roll_number}</span>
             </div>
           </Link>
           <div className={styles.navProfile}>
             <div className={styles.profileName}>
               <span className={styles.rank}>Trainee</span>
-              <span className={styles.points}>{points} Points</span>
+              <span className={styles.points}>{profile.points} Points</span>
             </div>
             <div className={styles.badge}>
               <Bronze />
