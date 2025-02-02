@@ -27,7 +27,6 @@ const Dashboard: React.FC = () => {
         router.push("/login");
         return;
       }
-
       setLoading(true);
       try {
         const profilesRef = collection(db, "profiles");
@@ -37,8 +36,8 @@ const Dashboard: React.FC = () => {
           profilesList.push({ id: doc.id, ...doc.data() } as Profile);
         });
         setProfiles(profilesList);
-      } catch (err) {
-        setError("Unexpected error: " + err);
+      } catch (err: any) {
+        setError("Unexpected error: " + err.message);
       } finally {
         setLoading(false);
       }

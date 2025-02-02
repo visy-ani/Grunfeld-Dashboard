@@ -20,38 +20,42 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Use the providerData array to find the GitHub provider data.
+        // Check if there is extra form data in localStorage.
+        // This extra data is only present on the first login.
+        const storedFormData = localStorage.getItem("userFormData");
+        if (!storedFormData) {
+          // No extra form data means this is a reload,
+          // so do not update the database.
+          return;
+        }
+        const extraData = JSON.parse(storedFormData);
+
+        // Get provider data from the GitHub provider.
         const githubProvider = user.providerData.find(
           (provider) => provider.providerId === "github.com"
         );
 
         // Construct the GitHub profile URL using the provider's UID.
+        // (Note: Using UID assumes that it is the GitHub username.
+        //  If that’s not accurate, you might need to fetch additional info.)
         let githubProfileUrl = "";
         if (githubProvider) {
-          // Here, we assume that githubProvider.uid holds the GitHub username.
           const githubUsername = githubProvider.uid;
           githubProfileUrl = `https://github.com/${githubUsername}`;
           console.log("Constructed GitHub Profile URL:", githubProfileUrl);
         }
 
-        // Retrieve any extra form data stored during login (if available)
-        const storedFormData = localStorage.getItem("userFormData");
-        const extraData = storedFormData ? JSON.parse(storedFormData) : null;
-
         // Reference to the user profile document in Firestore.
         const userRef = doc(db, "profiles", user.uid);
         const userSnap = await getDoc(userRef);
 
-        // Build the update object, merging extra form data with existing data.
-        const updateData = {
+        // Build the update object using extra form data.
+        const updateData: any = {
           name:
             (extraData && extraData.name) ||
             user.displayName ||
             (userSnap.exists() ? userSnap.data().name : ""),
-          // Set the GitHub profile URL as constructed.
-          github_profile:
-            githubProfileUrl ||
-            (userSnap.exists() ? userSnap.data().github_profile : ""),
+          github_profile: githubProfileUrl, // update with the constructed URL
           roll_number:
             (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
               ? extraData.rollNumber
@@ -66,7 +70,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           lastLogin: serverTimestamp(),
         };
 
-        // If the document exists, update; otherwise, create a new document.
         if (userSnap.exists()) {
           await updateDoc(userRef, updateData);
         } else {
@@ -76,10 +79,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         }
 
-        // Clear stored form data after merging.
-        if (storedFormData) {
-          localStorage.removeItem("userFormData");
-        }
+        // Clear stored extra form data after the first login update.
+        localStorage.removeItem("userFormData");
       }
     });
 
