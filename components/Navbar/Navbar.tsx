@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Bronze from "@/ui/Badges/Common";
 import supabase from "@/lib/supabaseClient";
-import { Github } from "lucide-react";
 import styles from "@/styles/Navbar.module.css";
 
 interface Profile {
