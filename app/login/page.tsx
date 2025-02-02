@@ -50,7 +50,7 @@ const LoginPage: React.FC = () => {
       return false;
     }
     if (formData.rollNumber.length !== 5) {
-      setError("Roll Number must be exactly 6 characters");
+      setError("Roll Number must be exactly 5 characters");
       return false;
     }
     return true;
@@ -132,7 +132,7 @@ const LoginPage: React.FC = () => {
             onChange={handleInputChange}
             onFocus={() => setFocusedField("rollNumber")}
             onBlur={() => setFocusedField(null)}
-            placeholder="Roll Number (6 characters)"
+            placeholder="Roll Number (5 characters)"
             maxLength={6}
           />
           <div
