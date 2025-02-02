@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
-import Link from "next/link";
 import styles from "@/styles/SearchPanel.module.css";
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
@@ -75,7 +74,7 @@ const SearchPanel: React.FC = () => {
         if (error) {
           console.error("Error fetching users:", error);
         } else if (data) {
-          const mappedUsers: User[] = data.map((item: any) => ({
+          const mappedUsers: User[] = data.map((item) => ({
             id: item.id,
             name: item.name,
             username: item.username,

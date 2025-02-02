@@ -2,9 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
 import { supabase } from "@/lib/supabaseClient";
 import styles from "@/styles/Navbar.module.css";

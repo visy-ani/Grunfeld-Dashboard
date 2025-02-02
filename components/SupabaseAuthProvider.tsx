@@ -36,7 +36,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Build the update object:
         // - If extraData exists (first login), use its values.
         // - Otherwise, fall back to the existing profile values.
-        const updateData: any = {
+        const updateData = {
           id: user.id,
           name:
             (extraData && extraData.name) ||
