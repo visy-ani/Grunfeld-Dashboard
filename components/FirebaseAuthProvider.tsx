@@ -53,7 +53,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userSnap = await getDoc(userRef);
 
         // Build the update data using extraData (first login) or fallback to existing data.
-        const updateData: any = {
+        const updateData = {
           name:
             (extraData && extraData.name) ||
             user.displayName ||
