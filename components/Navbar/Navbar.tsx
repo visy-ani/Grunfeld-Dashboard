@@ -1,12 +1,13 @@
+// components/Navbar.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
+import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
-import supabase from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 import styles from "@/styles/Navbar.module.css";
-import {useRouter} from "next/router";
 
 interface Profile {
   id: string;
@@ -20,17 +21,14 @@ interface Profile {
 
 const Navbar: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      // Get the currently authenticated user
       const {
         data: { user },
       } = await supabase.auth.getUser();
 
       if (user) {
-        // Query the profiles table for this user's profile
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
@@ -46,7 +44,7 @@ const Navbar: React.FC = () => {
     };
 
     fetchUserProfile();
-  }, [router.asPath]);
+  }, []);
 
   return (
     <nav className={styles.navbar}>
@@ -61,29 +59,9 @@ const Navbar: React.FC = () => {
         <></>
       ) : (
         <div className={styles.navProfileContainer}>
-
-          {/* Clickable Profile */}
-          {/* <Link href={`/profile/${profile.id}`} className={styles.userProfile}>
-            <Image
-              src={profile.profile_image || "https://avatar.iran.liara.run/public"}
-              alt="User Profile"
-              className={styles.profilePic}
-              width={100}
-              height={100}
-            />
-            <div className={styles.userInfo}>
-              <span className={styles.userName}>{profile.name}</span>
-              <span className={styles.userRoll}>{profile.roll_number}</span>
-            </div>
-          </Link> */}
-
-
           <div className={styles.userProfile}>
             <Image
-              src={
-                profile.profile_image ||
-                "https://avatar.iran.liara.run/public"
-              }
+              src={profile.profile_image || "https://avatar.iran.liara.run/public"}
               alt="User Profile"
               className={styles.profilePic}
               width={100}

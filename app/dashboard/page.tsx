@@ -1,12 +1,11 @@
-'use client';
+// pages/dashboard.tsx or app/dashboard/page.tsx
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import styles from '@/styles/dashboard.module.css';
-import supabase from '@/lib/supabaseClient';
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import styles from "@/styles/dashboard.module.css";
+import { supabase } from "@/lib/supabaseClient";
 
-// Define the Profile interface based on your Supabase table
 interface Profile {
   id: string;
   name: string;
@@ -18,31 +17,28 @@ const Dashboard: React.FC = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
-  // Fetch profiles from Supabase on component mount
   useEffect(() => {
     const fetchProfiles = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from('profiles').select('*');
+        const { data, error } = await supabase.from("profiles").select("*");
         if (error) {
-          setError('Error fetching profiles: ' + error.message);
+          setError("Error fetching profiles: " + error.message);
         } else {
-          console.log(data)
+          console.log("Fetched profiles:", data);
           setProfiles(data as Profile[]);
         }
-      } catch (err) {
-        setError('Unexpected error: ' + err);
+      } catch (err: any) {
+        setError("Unexpected error: " + err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfiles();
-  }, [router.asPath]);
+  }, []);
 
-  // Optionally, show a loading state or error message before the profiles are loaded
   if (loading) return <div className={styles.loading}>Loading profiles...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
 

@@ -1,6 +1,8 @@
+// components/SearchPanel.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
 import styles from "@/styles/SearchPanel.module.css";
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
@@ -10,7 +12,7 @@ import Common from "@/ui/Badges/Common";
 import Rare from "@/ui/Badges/Rare";
 import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
-import supabase from "@/lib/supabaseClient";
+import { supabase } from "@/lib/supabaseClient";
 
 interface User {
   id: number;
@@ -57,7 +59,6 @@ const getBadgeComponent = (points: number, rank: number) => {
   );
 };
 
-
 const SearchPanel: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -74,7 +75,7 @@ const SearchPanel: React.FC = () => {
         if (error) {
           console.error("Error fetching users:", error);
         } else if (data) {
-          const mappedUsers: User[] = data.map((item) => ({
+          const mappedUsers: User[] = data.map((item: any) => ({
             id: item.id,
             name: item.name,
             username: item.username,
@@ -201,20 +202,9 @@ const SearchPanel: React.FC = () => {
 
       {filteredUsers.map((user, index) => (
         <div key={user.id} className={styles.userRow}>
-          <div className={styles.badge}>
-            {getBadgeComponent(user.points, index + 1)}
-          </div> 
+          <div className={styles.badge}>{getBadgeComponent(user.points, index + 1)}</div>
           <div className={styles.profileDetails}>
-            {/* <Link
-              href={`/profile/${user.username}`}
-              className={styles.userInfo}
-            >
-              <span className={styles.userName}>{user.name}</span>
-              <span className={styles.userHierarchy}>{user.rollNumber}</span>
-            </Link> */}
-            <div
-              className={styles.userInfo}
-            >
+            <div className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
             </div>

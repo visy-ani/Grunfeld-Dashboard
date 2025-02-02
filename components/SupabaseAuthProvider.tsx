@@ -1,7 +1,8 @@
+// components/AuthProvider.tsx
 "use client";
 
 import { useEffect } from "react";
-import supabase from "@/lib/supabaseClient";
+import {supabase} from "@/lib/supabaseClient";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -13,52 +14,57 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Get the currently authenticated user
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // Retrieve GitHub username using a fallback strategy.
+        // Extract GitHub info from user metadata
         const githubUsername =
           user.user_metadata.preferred_username || user.user_metadata.login;
         const githubProfileUrl = githubUsername
           ? `https://github.com/${githubUsername}`
           : null;
-          
-        // Retrieve the GitHub avatar from user metadata.
         const avatarUrl = user.user_metadata.avatar_url || null;
 
-        console.log("GitHub Username:", githubUsername);
-        console.log("GitHub Profile URL:", githubProfileUrl);
-        console.log("GitHub Avatar URL:", avatarUrl);
-
-        // Retrieve any extra form data stored before the OAuth redirect (if available)
+        // Retrieve any extra form data stored before the OAuth redirect (only available at first login)
         const storedFormData = localStorage.getItem("userFormData");
         const extraData = storedFormData ? JSON.parse(storedFormData) : null;
 
-        // Fetch the existing profile record (if any) so we don't overwrite existing data with empty strings.
+        // Fetch the existing profile record (if any)
         const { data: existingProfile } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", user.id)
           .single();
 
-        // Build the update object. Only override certain fields if new data is provided.
-        const updateData = {
+        // Build the update object:
+        // - If extraData exists (first login), use its values.
+        // - Otherwise, fall back to the existing profile values.
+        const updateData: any = {
           id: user.id,
-          name: extraData?.name || user.user_metadata.full_name || existingProfile?.name || "",
-          github_profile: githubProfileUrl || existingProfile?.github_profile,
-          // Use extraData only if it exists; otherwise, fall back to existing values.
-          roll_number: extraData?.rollNumber || existingProfile?.roll_number || "",
-          academic_year: extraData?.academicYear || existingProfile?.academic_year || "",
-          points: extraData?.points !== undefined ? extraData.points : existingProfile?.points || 0,
-          // Set the profile image from GitHub if available
-          profile_image: avatarUrl || existingProfile?.profile_image || "",
+          name:
+            (extraData && extraData.name) ||
+            user.user_metadata.full_name ||
+            (existingProfile && existingProfile.name) ||
+            "",
+          github_profile: githubProfileUrl || (existingProfile && existingProfile.github_profile) || "",
+          roll_number:
+            (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
+              ? extraData.rollNumber
+              : existingProfile && existingProfile.roll_number) || "",
+          academic_year:
+            (extraData && extraData.academicYear && extraData.academicYear.trim() !== ""
+              ? extraData.academicYear
+              : existingProfile && existingProfile.academic_year) || "",
+          points:
+            (extraData && extraData.points !== undefined
+              ? extraData.points
+              : existingProfile && existingProfile.points) || 0,
+          profile_image: avatarUrl || (existingProfile && existingProfile.profile_image) || "",
         };
 
         const { error } = await supabase.from("profiles").upsert(updateData);
         if (error) {
           console.error("Error saving profile data:", error);
-        } else {
-          // Clear stored form data if it was used
-          if (storedFormData) {
-            localStorage.removeItem("userFormData");
-          }
+        } else if (storedFormData) {
+          // Clear stored form data after the first login upsert
+          localStorage.removeItem("userFormData");
         }
       }
     }
