@@ -34,7 +34,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userSnap = await getDoc(userRef);
 
         // Build update object. Use extraData if available (first login) else existing values.
-        const updateData: any = {
+        const updateData = {
           name: (extraData && extraData.name) || providerData?.displayName || (userSnap.exists() ? userSnap.data().name : ""),
           github_profile: `https://github.com/${githubUsername}`, // You might adjust this if you have the actual username.
           roll_number: (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""

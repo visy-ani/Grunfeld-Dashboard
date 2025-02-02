@@ -39,8 +39,8 @@ const Dashboard: React.FC = () => {
           profilesList.push({ id: doc.id, ...doc.data() } as Profile);
         });
         setProfiles(profilesList);
-      } catch (err: any) {
-        setError("Unexpected error: " + err.message);
+      } catch (err) {
+        setError("Unexpected error: " + err);
       } finally {
         setLoading(false);
       }

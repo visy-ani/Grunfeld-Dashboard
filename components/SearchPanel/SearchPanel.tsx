@@ -2,7 +2,6 @@
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
-import Link from "next/link";
 import styles from "@/styles/SearchPanel.module.css";
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
