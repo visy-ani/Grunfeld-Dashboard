@@ -76,7 +76,7 @@ const LoginPage: React.FC = () => {
         return;
       }
       // At this point, the user is redirected to GitHub for authentication.
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       setError('An unexpected error occurred. Please try again.');
     } finally {

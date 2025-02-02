@@ -39,7 +39,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           .single();
 
         // Build the update object. Only override certain fields if new data is provided.
-        const updateData: any = {
+        const updateData = {
           id: user.id,
           name: extraData?.name || user.user_metadata.full_name || existingProfile?.name || "",
           github_profile: githubProfileUrl || existingProfile?.github_profile,

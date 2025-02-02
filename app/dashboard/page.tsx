@@ -29,8 +29,8 @@ const Dashboard: React.FC = () => {
         } else {
           setProfiles(data as Profile[]);
         }
-      } catch (err: any) {
-        setError('Unexpected error: ' + err.message);
+      } catch (err) {
+        setError('Unexpected error: ' + err);
       } finally {
         setLoading(false);
       }
