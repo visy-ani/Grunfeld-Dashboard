@@ -1,4 +1,4 @@
-// pages/login.tsx or app/login/page.tsx
+// pages/login.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -14,10 +14,10 @@ import {
   SelectValue,
 } from "@/ui/Select";
 import { Github, Loader2 } from "lucide-react";
-import { auth } from "@/lib/firebaseClient";
+import { auth, db } from "@/lib/firebaseClient";
 import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-// import { console } from "inspector";
 
 const academicYears = ["First Year", "Second Year", "Third Year", "Fourth Year"];
 
@@ -49,6 +49,7 @@ const LoginPage: React.FC = () => {
       setError("Please fill in all fields");
       return false;
     }
+    // Change validation length as needed (here rollNumber is 5 characters as per your code)
     if (formData.rollNumber.length !== 5) {
       setError("Roll Number must be exactly 5 characters");
       return false;
@@ -59,24 +60,50 @@ const LoginPage: React.FC = () => {
   const handleGithubLogin = async () => {
     if (!validateForm()) return;
 
-    // Store extra form data in localStorage for AuthProvider use.
+    // Store extra form data in localStorage for use in AuthProvider
     localStorage.setItem("userFormData", JSON.stringify(formData));
 
     setIsLoading(true);
     try {
       const provider = new GithubAuthProvider();
-      // Optionally, add scopes:
       provider.addScope("read:user");
       provider.addScope("user:email");
 
       // Sign in with popup
       const result = await signInWithPopup(auth, provider);
-      console.log(result);
-      // After successful login, redirect to dashboard
+      const credential = GithubAuthProvider.credentialFromResult(result);
+      const token = credential?.accessToken;
+
+      if (!token) {
+        throw new Error("No GitHub access token found");
+      }
+
+      // Fetch GitHub user data with Authorization header
+      const response = await fetch("https://api.github.com/user", {
+        headers: { Authorization: `token ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch GitHub user info");
+      }
+      const data = await response.json();
+      const githubUsername = data.login;
+      console.log("Fetched GitHub Username:", githubUsername);
+
+      // Update Firestore: set the username and construct the github_profile URL
+      const user = result.user;
+      if (user && githubUsername) {
+        const userRef = doc(db, "profiles", user.uid);
+        await updateDoc(userRef, {
+          username: githubUsername,
+          github_profile: `https://www.github.com/${githubUsername}`,
+        });
+      }
+
+      // Redirect to dashboard after successful login and update
       router.push("/dashboard");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Error signing in with GitHub: " + err);
+      setError("Error signing in with GitHub: " + err.message);
     } finally {
       setIsLoading(false);
     }

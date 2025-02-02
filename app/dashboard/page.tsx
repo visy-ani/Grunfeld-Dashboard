@@ -1,11 +1,11 @@
-// pages/dashboard.tsx or app/dashboard/page.tsx
+// pages/dashboard.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import styles from "@/styles/dashboard.module.css";
 import { auth, db } from "@/lib/firebaseClient";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { collection, getDocs } from "firebase/firestore";
 
 interface Profile {
@@ -23,7 +23,6 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const checkSessionAndFetchProfiles = async () => {
-      // Check if a user is authenticated
       if (!auth.currentUser) {
         router.push("/login");
         return;
@@ -31,7 +30,6 @@ const Dashboard: React.FC = () => {
 
       setLoading(true);
       try {
-        // Fetch profiles from the "profiles" collection
         const profilesRef = collection(db, "profiles");
         const querySnapshot = await getDocs(profilesRef);
         const profilesList: Profile[] = [];
@@ -39,8 +37,8 @@ const Dashboard: React.FC = () => {
           profilesList.push({ id: doc.id, ...doc.data() } as Profile);
         });
         setProfiles(profilesList);
-      } catch (err) {
-        setError("Unexpected error: " + err);
+      } catch (err: any) {
+        setError("Unexpected error: " + err.message);
       } finally {
         setLoading(false);
       }
