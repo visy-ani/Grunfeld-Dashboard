@@ -9,7 +9,6 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
