@@ -20,24 +20,27 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Check if there is extra form data in localStorage.
-        // This extra data is only present on the first login.
+        // Check if we've already updated the profile (i.e. first login update done)
+        const profileUpdated = localStorage.getItem("profileUpdated");
+        // If already updated, do nothing.
+        if (profileUpdated) {
+          return;
+        }
+
+        // Check for extra form data (only set on first login)
         const storedFormData = localStorage.getItem("userFormData");
         if (!storedFormData) {
-          // No extra form data means this is a reload,
-          // so do not update the database.
+          // No extra form data means we shouldn't update (likely a reload).
           return;
         }
         const extraData = JSON.parse(storedFormData);
 
-        // Get provider data from the GitHub provider.
+        // Get GitHub provider data from the user's providerData array.
         const githubProvider = user.providerData.find(
           (provider) => provider.providerId === "github.com"
         );
 
-        // Construct the GitHub profile URL using the provider's UID.
-        // (Note: Using UID assumes that it is the GitHub username.
-        //  If that’s not accurate, you might need to fetch additional info.)
+        // Construct the GitHub profile URL from the provider's UID (assuming that's the GitHub username).
         let githubProfileUrl = "";
         if (githubProvider) {
           const githubUsername = githubProvider.uid;
@@ -45,17 +48,17 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           console.log("Constructed GitHub Profile URL:", githubProfileUrl);
         }
 
-        // Reference to the user profile document in Firestore.
+        // Reference to the user's profile document in Firestore.
         const userRef = doc(db, "profiles", user.uid);
         const userSnap = await getDoc(userRef);
 
-        // Build the update object using extra form data.
-        const updateData = {
+        // Build the update data using extraData (first login) or fallback to existing data.
+        const updateData: any = {
           name:
             (extraData && extraData.name) ||
             user.displayName ||
             (userSnap.exists() ? userSnap.data().name : ""),
-          github_profile: githubProfileUrl, // update with the constructed URL
+          github_profile: githubProfileUrl, // update with constructed URL
           roll_number:
             (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
               ? extraData.rollNumber
@@ -79,7 +82,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         }
 
-        // Clear stored extra form data after the first login update.
+        // Set the flag to indicate the profile has been updated and clear the extra form data.
+        localStorage.setItem("profileUpdated", "true");
         localStorage.removeItem("userFormData");
       }
     });
