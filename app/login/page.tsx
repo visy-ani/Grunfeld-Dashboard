@@ -101,9 +101,9 @@ const LoginPage: React.FC = () => {
 
       // Redirect to dashboard after successful login and update
       router.push("/dashboard");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      setError("Error signing in with GitHub: " + err.message);
+      setError("Error signing in with GitHub: " + err);
     } finally {
       setIsLoading(false);
     }
