@@ -1,3 +1,4 @@
+// components/SearchPanel.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
@@ -10,10 +11,11 @@ import Common from "@/ui/Badges/Common";
 import Rare from "@/ui/Badges/Rare";
 import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
-import supabase from "@/lib/supabaseClient";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebaseClient";
 
 interface User {
-  id: number;
+  id: string;
   name: string;
   username: string;
   rollNumber: string;
@@ -57,7 +59,6 @@ const getBadgeComponent = (points: number, rank: number) => {
   );
 };
 
-
 const SearchPanel: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -70,24 +71,25 @@ const SearchPanel: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data, error } = await supabase.from("profiles").select("*");
-        if (error) {
-          console.error("Error fetching users:", error);
-        } else if (data) {
-          const mappedUsers: User[] = data.map((item) => ({
-            id: item.id,
-            name: item.name,
-            username: item.username,
-            rollNumber: item.roll_number,
-            academicYear: Number(item.academic_year),
-            points: item.points,
-            profileImage: item.profile_image,
-            githubProfile: item.github_profile,
-          }));
-          setUsers(mappedUsers);
-        }
+        const profilesRef = collection(db, "profiles");
+        const querySnapshot = await getDocs(profilesRef);
+        const usersList: User[] = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          usersList.push({
+            id: doc.id,
+            name: data.name,
+            username: data.username || "", // Make sure this field is updated in your login flow
+            rollNumber: data.roll_number,
+            academicYear: Number(data.academic_year),
+            points: data.points,
+            profileImage: data.profile_image,
+            githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
+          });
+        });
+        setUsers(usersList);
       } catch (error) {
-        console.error("Unexpected error:", error);
+        console.error("Error fetching users:", error);
       }
     };
 
@@ -125,11 +127,9 @@ const SearchPanel: React.FC = () => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
-
       const matchesAcademicYear =
         filters.academicYears.length === 0 ||
         filters.academicYears.includes(user.academicYear);
-
       const matchesPointsRange =
         filters.pointsRanges.length === 0 ||
         filters.pointsRanges.some((range) => {
@@ -144,7 +144,6 @@ const SearchPanel: React.FC = () => {
               return false;
           }
         });
-
       return matchesSearch && matchesAcademicYear && matchesPointsRange;
     });
   }, [users, searchTerm, filters]);
@@ -201,25 +200,19 @@ const SearchPanel: React.FC = () => {
 
       {filteredUsers.map((user, index) => (
         <div key={user.id} className={styles.userRow}>
-          <div className={styles.badge}>
-            {getBadgeComponent(user.points, index + 1)}
-          </div> 
+          <div className={styles.badge}>{getBadgeComponent(user.points, index + 1)}</div>
           <div className={styles.profileDetails}>
-            {/* <Link
-              href={`/profile/${user.username}`}
-              className={styles.userInfo}
-            >
-              <span className={styles.userName}>{user.name}</span>
-              <span className={styles.userHierarchy}>{user.rollNumber}</span>
-            </Link> */}
-            <div
-              className={styles.userInfo}
-            >
+            <div className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
             </div>
             <a
-              href={user.githubProfile}
+              // Use the stored GitHub URL if valid, otherwise build it from the username.
+              href={
+                user.githubProfile && user.githubProfile.startsWith("http")
+                  ? user.githubProfile
+                  : `https://www.github.com/${user.username}`
+              }
               target="_blank"
               rel="noopener noreferrer"
               className={styles.githubIcon}

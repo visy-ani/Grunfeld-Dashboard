@@ -1,13 +1,13 @@
-'use client';
+// pages/dashboard.tsx
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import styles from '@/styles/dashboard.module.css';
-import supabase from '@/lib/supabaseClient';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import styles from "@/styles/dashboard.module.css";
+import { auth, db } from "@/lib/firebaseClient";
 import { useRouter } from "next/navigation";
+import { collection, getDocs } from "firebase/firestore";
 
-
-// Define the Profile interface based on your Supabase table
 interface Profile {
   id: string;
   name: string;
@@ -21,30 +21,32 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  // Fetch profiles from Supabase on component mount
   useEffect(() => {
-    const fetchProfiles = async () => {
+    const checkSessionAndFetchProfiles = async () => {
+      if (!auth.currentUser) {
+        router.push("/login");
+        return;
+      }
+
       setLoading(true);
       try {
-        const { data, error } = await supabase.from('profiles').select('*');
-        if (error) {
-          setError('Error fetching profiles: ' + error.message);
-        } else {
-          console.log(data)
-          setProfiles(data as Profile[]);
-        }
-      } catch (err) {
-        setError('Unexpected error: ' + err);
+        const profilesRef = collection(db, "profiles");
+        const querySnapshot = await getDocs(profilesRef);
+        const profilesList: Profile[] = [];
+        querySnapshot.forEach((doc) => {
+          profilesList.push({ id: doc.id, ...doc.data() } as Profile);
+        });
+        setProfiles(profilesList);
+      } catch (err: any) {
+        setError("Unexpected error: " + err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfiles();
-    router.refresh();
+    checkSessionAndFetchProfiles();
   }, [router]);
 
-  // Optionally, show a loading state or error message before the profiles are loaded
   if (loading) return <div className={styles.loading}>Loading profiles...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
 
