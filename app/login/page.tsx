@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
       setError("Please fill in all fields");
       return false;
     }
-    if (formData.rollNumber.length !== 6) {
+    if (formData.rollNumber.length !== 5) {
       setError("Roll Number must be exactly 6 characters");
       return false;
     }
