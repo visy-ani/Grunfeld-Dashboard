@@ -57,13 +57,7 @@ const Navbar: React.FC = () => {
       </h1>
 
       {!profile ? (
-        <button className={styles.loginButton}>
-          <div className={styles.loginButtonContent}>
-            Login
-            <Github className={styles.loginGithubIcon} />
-          </div>
-          <div className={styles.loginButtonEffect}></div>
-        </button>
+        <></>
       ) : (
         <div className={styles.navProfileContainer}>
 
