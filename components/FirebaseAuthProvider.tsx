@@ -9,7 +9,6 @@ import {
   getDoc,
   setDoc,
   updateDoc,
-  updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
 
@@ -44,7 +43,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userSnap = await getDoc(userRef);
 
         // Build the update object, merging extra form data with existing data.
-        const updateData: any = {
+        const updateData = {
           name:
             (extraData && extraData.name) ||
             user.displayName ||
