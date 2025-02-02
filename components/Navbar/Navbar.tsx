@@ -8,14 +8,13 @@ import Bronze from "@/ui/Badges/Common";
 import supabase from "@/lib/supabaseClient";
 import styles from "@/styles/Navbar.module.css";
 
-// Define the profile interface (adjust field names if needed)
 interface Profile {
   id: string;
   name: string;
   roll_number: string;
   academic_year: string;
   github_profile: string;
-  profile_image?: string;
+  profile_image: string;
   points: number;
 }
 
@@ -30,7 +29,7 @@ const Navbar: React.FC = () => {
       } = await supabase.auth.getUser();
 
       if (user) {
-        // Query the profiles table for this user's profile using their Supabase Auth id
+        // Query the profiles table for this user's profile
         const { data, error } = await supabase
           .from("profiles")
           .select("*")
@@ -57,23 +56,23 @@ const Navbar: React.FC = () => {
         </span>
       </h1>
 
-      {/* If no profile is loaded, show the Login button */}
       {!profile ? (
-        <></>
+        <button className={styles.loginButton}>
+          <div className={styles.loginButtonContent}>
+            Login
+            <Github className={styles.loginGithubIcon} />
+          </div>
+          <div className={styles.loginButtonEffect}></div>
+        </button>
       ) : (
         <div className={styles.navProfileContainer}>
           <Link href={`/profile/${profile.id}`} className={styles.userProfile}>
             <Image
-              src={
-                profile.profile_image ||
-                "https://avatar.iran.liara.run/public"
-              }
+              src={profile.profile_image || "https://avatar.iran.liara.run/public"}
               alt="User Profile"
               className={styles.profilePic}
               width={100}
               height={100}
-              // For Next.js 13, you might remove layout if using the new Image component API
-              // layout="intrinsic"
             />
             <div className={styles.userInfo}>
               <span className={styles.userName}>{profile.name}</span>
