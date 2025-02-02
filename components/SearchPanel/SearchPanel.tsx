@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState, useMemo, ChangeEvent } from "react";
+import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
 import styles from "@/styles/SearchPanel.module.css";
 import Input from "@/ui/Input";
 import Button from "@/ui/Button";
 import { Search, Filter, Github } from "lucide-react";
 import Checkbox from "@/ui/CheckBox";
 import Common from "@/ui/Badges/Common";
-import Rare from "@/ui/Badges/Rare"
+import Rare from "@/ui/Badges/Rare";
 import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
-import Link from "next/link";
+import supabase from "@/lib/supabaseClient";
 
 interface User {
   id: number;
@@ -35,77 +36,41 @@ const getBadgeComponent = (points: number, rank: number) => {
   return <Common />;
 };
 
-const sampleUsers: User[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    username: "john_doe",
-    rollNumber: "10357",
-    academicYear: 2023,
-    points: 1250,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/johndoe",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    username: "jane_smith",
-    rollNumber: "10345",
-    academicYear: 2022,
-    points: 1180,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/janesmith",
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    username: "mike_johnson",
-    rollNumber: "10367",
-    academicYear: 2024,
-    points: 1100,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/mikejohnson",
-  },
-  {
-    id: 4,
-    name: "Mike Johnson",
-    username: "mike_johnson",
-    rollNumber: "10367",
-    academicYear: 2024,
-    points: 1100,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/mikejohnson",
-  },
-  {
-    id: 5,
-    name: "Mike Johnson",
-    username: "mike_johnson",
-    rollNumber: "10367",
-    academicYear: 2024,
-    points: 1100,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/mikejohnson",
-  },
-  {
-    id: 6,
-    name: "Mike Johnson",
-    username: "mike_johnson",
-    rollNumber: "10367",
-    academicYear: 2024,
-    points: 1100,
-    profileImage: "/api/placeholder/100/100",
-    githubProfile: "https://github.com/mikejohnson",
-  },
-  
-];
-
 const SearchPanel: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [filters, setFilters] = useState<FilterState>({
     academicYears: [],
     pointsRanges: [],
   });
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data, error } = await supabase.from("profiles").select("*");
+        if (error) {
+          console.error("Error fetching users:", error);
+        } else if (data) {
+          const mappedUsers: User[] = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            username: item.username,
+            rollNumber: item.roll_number,
+            academicYear: Number(item.academic_year),
+            points: item.points,
+            profileImage: item.profile_image,
+            githubProfile: item.github_profile,
+          }));
+          setUsers(mappedUsers);
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -134,7 +99,7 @@ const SearchPanel: React.FC = () => {
   };
 
   const filteredUsers = useMemo(() => {
-    return sampleUsers.filter((user) => {
+    return users.filter((user) => {
       const matchesSearch =
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
@@ -160,7 +125,7 @@ const SearchPanel: React.FC = () => {
 
       return matchesSearch && matchesAcademicYear && matchesPointsRange;
     });
-  }, [searchTerm, filters]);
+  }, [users, searchTerm, filters]);
 
   return (
     <div className={styles.container}>
@@ -191,7 +156,6 @@ const SearchPanel: React.FC = () => {
               </label>
             ))}
           </div>
-
           <div className={styles.filterSection}>
             <h4>Points Range</h4>
             {["low", "medium", "high"].map((range) => (
@@ -213,10 +177,10 @@ const SearchPanel: React.FC = () => {
         <div className={styles.headerPoints}>Points</div>
       </div>
 
-      {filteredUsers.map((user,index) => (
+      {filteredUsers.map((user, index) => (
         <div key={user.id} className={styles.userRow}>
           <div className={styles.badge}>
-          {getBadgeComponent(user.points, index + 1)}
+            {getBadgeComponent(user.points, index + 1)}
           </div>
           <div className={styles.profileDetails}>
             <Link
