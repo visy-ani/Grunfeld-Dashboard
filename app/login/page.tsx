@@ -133,7 +133,7 @@ const LoginPage: React.FC = () => {
             onFocus={() => setFocusedField("rollNumber")}
             onBlur={() => setFocusedField(null)}
             placeholder="Roll Number (5 characters)"
-            maxLength={6}
+            maxLength={5}
           />
           <div
             className={`${styles.focusIndicator} ${
