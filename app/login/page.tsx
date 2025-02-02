@@ -132,7 +132,7 @@ const LoginPage: React.FC = () => {
             onChange={handleInputChange}
             onFocus={() => setFocusedField("rollNumber")}
             onBlur={() => setFocusedField(null)}
-            placeholder="Roll Number (6 characters)"
+            placeholder="Roll Number (5 characters)"
             maxLength={6}
           />
           <div
