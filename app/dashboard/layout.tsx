@@ -1,59 +1,23 @@
 import { Navbar, SearchPanel, SchedulePanel } from "@/components";
+import styles from "@/styles/DashboardLayout.module.css";
 
 export default function DashboardLayout() {
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* Top Navbar */}
-      <div
-        style={{
-          width: "100%",
-          height: "60px",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          color: "white",
-          zIndex: 1000,
-        }}
-      >
+    <div className={styles.dashboardContainer}>
+      {/* Navbar */}
+      <div className={styles.navbarWrapper}>
         <Navbar />
       </div>
 
-      {/* Main Dashboard Layout (40% Left Fixed, 60% Right) */}
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          marginTop: "90px",
-          height: "calc(100vh - 60px)",
-        }}
-      >
-        {/* Left Section (40% width, Fixed) */}
-        <div
-          style={{
-            width: "30%",
-            background: "#f4f4f4",
-            position: "fixed",
-            left: 0,
-            top: "90px",
-            height: "calc(100vh - 90px)",
-          }}
-        >
+      {/* Main Dashboard Layout */}
+      <div className={styles.dashboardMain}>
+        {/* Left Section */}
+        <div className={styles.leftSection}>
           <SchedulePanel />
         </div>
 
-        {/* Right Section (60% width, Scrollable) */}
-        <div
-          style={{
-            width: "70%",
-            marginLeft: "30%",
-            padding: "1rem",
-            overflowY: "auto",
-            height: "calc(100vh - 90px)",
-            scrollbarWidth: "none", 
-            msOverflowStyle: "none", 
-          }}
-          className="hide-scrollbar"
-        >
+        {/* Right Section */}
+        <div className={styles.rightSection}>
           <SearchPanel />
         </div>
       </div>

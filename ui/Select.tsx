@@ -54,16 +54,18 @@ SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayNam
 const SelectItem = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>>(
   ({ className, children, ...props }, ref) => (
     <SelectPrimitive.Item ref={ref} className={`${styles.item} ${className}`} {...props}>
+      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
       <span className={styles.itemIndicatorWrapper}>
         <SelectPrimitive.ItemIndicator>
           <Check className={styles.checkIcon} />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>
   )
 );
+
 SelectItem.displayName = SelectPrimitive.Item.displayName;
+
 
 const SelectLabel = React.forwardRef<HTMLDivElement, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>>(
   ({ className, ...props }, ref) => (

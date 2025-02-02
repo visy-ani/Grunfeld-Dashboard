@@ -29,11 +29,34 @@ interface FilterState {
 }
 
 const getBadgeComponent = (points: number, rank: number) => {
-  if (rank === 1) return <Legendary />;
-  if (rank === 2) return <Epic />;
-  if (rank === 3) return <Rare />;
-  return <Common />;
+  if (rank === 1) {
+    return (
+      <div className={`${styles.badge} ${styles.legendaryGlow}`}>
+        <Legendary />
+      </div>
+    );
+  }
+  if (rank === 2) {
+    return (
+      <div className={`${styles.badge} ${styles.epicGlow}`}>
+        <Epic />
+      </div>
+    );
+  }
+  if (rank === 3) {
+    return (
+      <div className={`${styles.badge} ${styles.rareGlow}`}>
+        <Rare />
+      </div>
+    );
+  }
+  return (
+    <div className={`${styles.badge} ${styles.commonGlow}`}>
+      <Common />
+    </div>
+  );
 };
+
 
 const sampleUsers: User[] = [
   {
@@ -217,7 +240,7 @@ const SearchPanel: React.FC = () => {
         <div key={user.id} className={styles.userRow}>
           <div className={styles.badge}>
           {getBadgeComponent(user.points, index + 1)}
-          </div>
+          </div> 
           <div className={styles.profileDetails}>
             <Link
               href={`/profile/${user.username}`}

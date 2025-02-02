@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '@/styles/Login.module.css'
 import { Alert, AlertDescription } from '@/ui/Alert';
 import LoginButton from '@/ui/LoginButton'
@@ -19,7 +19,7 @@ const LoginPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
+ 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError('');
     const { name, value } = e.target;
@@ -63,11 +63,25 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    setVh(); 
+    window.addEventListener('resize', setVh);
+
+    return () => {
+      window.removeEventListener('resize', setVh);
+    };
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.background} />
       <div className={styles.header}>
-        <h1 className={styles.title}>OSS</h1>
+        <h1 className={styles.title}>OSS CLUB</h1>
         <p className={styles.subtitle}>Open Source Software Portal</p>
       </div>
       <div className={styles.loginBox}>
@@ -130,7 +144,7 @@ const LoginPage: React.FC = () => {
             </>
           )}
         </LoginButton>
-        <p className={styles.footer}>By logging in, you agree to our Terms of Service and Privacy Policy</p>
+        <p className={styles.footer}>Join us to forge innovation, shape tomorrow!</p>
       </div>
     </div>
   );

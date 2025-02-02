@@ -8,13 +8,12 @@
   height: auto;
 }
 
-
 /* Heading */
 .heading {
   position: relative;
   display: flex;
-  justify-content: flex-start; 
-  align-items: center; 
+  justify-content: flex-start;
+  align-items: center;
   width: 40%;
   padding: 0 1rem;
 }
@@ -30,10 +29,9 @@
 .headingEffect {
   position: absolute;
   top: 50%;
-  left: 50%; 
-  transform: translate(-50%, -50%); 
+  left: 50%;
+  transform: translate(-50%, -50%);
   filter: blur(1rem);
-  /* background: radial-gradient(ellipse, #f87171, #fbbf24, #60a5fa); */
   background: radial-gradient(
     ellipse,
     #f87171 0%,
@@ -44,22 +42,21 @@
   animation: gradient 5s linear infinite;
   background-size: 300% 100%;
   z-index: -1;
-  height: 50%; 
-  width: 120%; 
+  height: 50%;
+  width: 120%;
 }
 
-
 /* Login Button */
-.loginButton{
+.loginButton {
   position: relative;
   border: none;
-} 
+}
 
-.loginButtonContent{
+.loginButtonContent {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.5rem; 
+  padding: 0.5rem 1.5rem;
   background-color: #0a0a0a;
   border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 20px;
@@ -68,8 +65,7 @@
   color: white;
 }
 
-
-.loginGithubIcon{
+.loginGithubIcon {
   width: 1.5rem;
   height: 1.5rem;
 }
@@ -94,11 +90,12 @@
 }
 
 /* Navbar Profile */
-.navProfileContainer{
+.navProfileContainer {
   display: flex;
   justify-content: space-between;
-  width: 100% ;
+  width: 100%;
 }
+
 .userProfile {
   display: flex;
   align-items: center;
@@ -114,12 +111,12 @@
   top: 0;
   height: 100%;
   width: 4px;
-  background-color: var(--primary-color, #007bff); 
+  background-color: var(--primary-color, #007bff);
   border-radius: 2px;
 }
 
 .profilePic {
-  height: 3rem; 
+  height: 3rem;
   width: 3rem;
   border-radius: 50%;
   object-fit: cover;
@@ -142,39 +139,36 @@
   color: white;
 }
 
-.navProfile{
+.navProfile {
   display: flex;
   height: 100%;
   gap: 0.5rem;
 }
 
-.profileName{
+.profileName {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 0.1rem;
 }
 
-.rank{
+.rank {
   font-size: 1.3rem;
   font-weight: bold;
 }
 
-.points{
+.points {
   font-size: 0.6rem;
   padding: 0.1rem 0.5rem;
   border: 1px solid white;
   border-radius: 30px;
 }
 
-.badge{
+.badge {
   width: 3.5rem;
   height: auto;
   filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
-  
 }
-
-
 
 @keyframes gradient {
   0% {
@@ -188,7 +182,101 @@
   }
 }
 
-  
+/* MEDIA QUERIES */
 
-
+/* Tablet and small desktop */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
   
+  .heading {
+    width: 60%;
+    padding: 0 0.5rem;
+  }
+  
+  .headingContent {
+    font-size: 1.3rem;
+  }
+  
+  .loginButtonContent {
+    padding: 0.4rem 1rem;
+  }
+  
+  .loginGithubIcon {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  
+  .userProfile {
+    gap: 0.75rem;
+    padding-left: 0.5rem;
+  }
+  
+  .profilePic {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  
+  .userName {
+    font-size: 0.9rem;
+  }
+  
+  .userRoll {
+    font-size: 0.8rem;
+  }
+  
+  .rank {
+    font-size: 1.1rem;
+  }
+  
+  .points {
+    font-size: 0.5rem;
+    padding: 0.1rem 0.3rem;
+  }
+  
+  .badge {
+    width: 3rem;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.5rem;
+  }
+  
+  .heading {
+    display: none;
+  }
+  
+  .headingContent {
+    font-size: 1.2rem;
+  }
+  
+  .loginButtonContent {
+    padding: 0.4rem 1rem;
+  }
+  
+  .userProfile {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .profilePic {
+    height: 2.5rem;
+    width: 2.5rem;
+  }
+  
+  .userName {
+    font-size: 0.9rem;
+  }
+  
+  .userRoll {
+    font-size: 0.8rem;
+  }
+}

@@ -17,7 +17,7 @@
   width: 100%;
   background-color: #1f293780;
   border: 1px solid #374151;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 }
 
 .searchBar:hover {
@@ -38,7 +38,7 @@
   color: #e0e0e0;
   font-size: 16px;
   transition: border-color 0.3s ease;
-  padding: 8px 12px; 
+  padding: 8px 12px;
 }
 
 .input::placeholder {
@@ -47,9 +47,9 @@
 }
 
 .input:focus {
-  border: 1px solid #888; 
+  border: 1px solid #888;
   outline: none;
-  background-color: #333; 
+  background-color: #333;
 }
 
 .filterButton {
@@ -68,13 +68,12 @@
   color: #e0e0e0;
 }
 
-
 .filterContainer {
   width: 100%;
   padding: 16px;
   background-color: #1f293780;
   border: 1px solid #374151;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
   margin-top: 12px;
 }
 
@@ -113,26 +112,28 @@
   margin-top: 16px;
   background-color: #1f293780;
   border: 1px solid #374151;
-  border-radius: .75rem;
+  border-radius: 0.75rem;
 }
 
-.headerRank{
+.headerRank {
   color: #aaa;
   display: inline-block;
   width: 6%;
   text-align: center;
 }
-.headerProfile{
+
+.headerProfile {
   display: inline-block;
   color: #aaa;
   width: 89%;
   padding: 0 50px;
 }
+
 .headerPoints {
   justify-content: space-between;
   color: #aaa;
   display: inline-block;
-  width:5%;
+  width: 5%;
   text-align: center;
 }
 
@@ -201,40 +202,67 @@
   text-align: center;
 }
 
-.badge{
+.badge {
   width: 3.5rem;
   height: auto;
-  /* filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5)); Common*/
-  /* filter: blur(0) drop-shadow(0 4px 16px rgba(0, 255, 42, 0.276)); Rare*/
-  /* filter: blur(0) drop-shadow(0 4px 16px rgba(64, 29, 107, 0.584)); Epic */
-  filter: blur(0) drop-shadow(0 4px 16px rgba(222, 78, 16, 0.584)); 
+  transition: filter 0.3s ease;
 }
 
+.commonGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
+}
 
+.rareGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(0, 255, 42, 0.276));
+}
 
+.epicGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(64, 29, 107, 0.584));
+}
 
-@media (max-width: 600px) {
-  .container {
-    padding: 8px;
-  }
+.legendaryGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(222, 78, 16, 0.584));
+}
 
+/* Mobile View (up to 425px) */
+@media (max-width: 425px) {
   .leaderboardHeader,
   .userRow {
-    flex-direction: column;
-    align-items: stretch;
+    padding: 15px 20px;
+  }
+
+  .headerRank{
+    text-align: left;
+    width: 35%;
+    padding: 0 10px;
+  }
+
+  .headerProfile{
+    width: 55%;
+    text-align: left;
+    padding: 0 0px;
+  }
+  .headerPoints {
+    width: 55%;
+    text-align: right;
+    padding: 0 10px;
   }
 
   .profileDetails {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .searchBar {
-    padding: 8px;
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 0 10px;
   }
 
-  .input {
-    margin-top: 8px;
+  .userPoints {
+    width: 20%;
+    padding: 0 10px;
+    padding-right: 20px;
+  }
+
+  .profileImage {
+    
+  }
+
+  .badge {
+   
   }
 }

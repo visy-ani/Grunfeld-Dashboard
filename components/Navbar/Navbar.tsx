@@ -7,7 +7,6 @@ import Bronze from "@/ui/Badges/Common";
 import Image from "next/image";
 
 const Navbar = ({ isLoggedIn = true, username = "John Doe", rollNumber=10357, points = 999, profilePic="https://avatar.iran.liara.run/public" }) => {
-  // Simulate the username (this can be fetched from the user session once GitHub auth is integrated)
 
   return (
     <nav className={styles.navbar}>
