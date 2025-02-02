@@ -79,12 +79,12 @@ const SearchPanel: React.FC = () => {
           usersList.push({
             id: doc.id,
             name: data.name,
-            username: data.username || "", // if available
+            username: data.username || "", // Make sure this field is updated in your login flow
             rollNumber: data.roll_number,
             academicYear: Number(data.academic_year),
             points: data.points,
             profileImage: data.profile_image,
-            githubProfile: data.github_profile,
+            githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
           });
         });
         setUsers(usersList);
@@ -207,7 +207,12 @@ const SearchPanel: React.FC = () => {
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
             </div>
             <a
-              href={user.githubProfile}
+              // Use the stored GitHub URL if valid, otherwise build it from the username.
+              href={
+                user.githubProfile && user.githubProfile.startsWith("http")
+                  ? user.githubProfile
+                  : `https://www.github.com/${user.username}`
+              }
               target="_blank"
               rel="noopener noreferrer"
               className={styles.githubIcon}

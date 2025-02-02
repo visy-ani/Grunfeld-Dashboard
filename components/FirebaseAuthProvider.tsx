@@ -8,8 +8,8 @@ import {
   doc,
   getDoc,
   setDoc,
-  serverTimestamp,
   updateDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 interface AuthProviderProps {
@@ -20,35 +20,42 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Get GitHub data from user object.
-        // Firebase Auth user object may contain additional info in providerData.
+        // Get provider data (from GitHub)
         const providerData = user.providerData[0]; // GitHub provider data
-        const githubUsername = providerData?.displayName || providerData?.email || "";
-        const githubPhotoURL = providerData?.photoURL || "";
-        // Retrieve extra form data (if any) stored during login
+        // For initial display, use displayName & photoURL; the GitHub username will be updated on login
+        const defaultUsername = providerData?.displayName || providerData?.email || "";
+        const defaultPhotoURL = providerData?.photoURL || "";
+
+        // Retrieve extra form data (only present at first login)
         const storedFormData = localStorage.getItem("userFormData");
         const extraData = storedFormData ? JSON.parse(storedFormData) : null;
 
-        // Reference to the user profile document
+        // Reference to user profile document
         const userRef = doc(db, "profiles", user.uid);
         const userSnap = await getDoc(userRef);
 
-        // Build update object. Use extraData if available (first login) else existing values.
-        const updateData = {
-          name: (extraData && extraData.name) || providerData?.displayName || (userSnap.exists() ? userSnap.data().name : ""),
-          github_profile: `https://github.com/${githubUsername}`, // You might adjust this if you have the actual username.
-          roll_number: (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
-            ? extraData.rollNumber
-            : userSnap.exists() ? userSnap.data().roll_number : ""),
-          academic_year: (extraData && extraData.academicYear && extraData.academicYear.trim() !== ""
-            ? extraData.academicYear
-            : userSnap.exists() ? userSnap.data().academic_year : ""),
+        // Build the update object using extraData if available; otherwise, keep existing values
+        const updateData: any = {
+          name:
+            (extraData && extraData.name) ||
+            providerData?.displayName ||
+            (userSnap.exists() ? userSnap.data().name : ""),
+          // github_profile will be updated later in the login flow after fetching the GitHub username.
+          github_profile: userSnap.exists() ? userSnap.data().github_profile || "" : "",
+          roll_number:
+            (extraData && extraData.rollNumber && extraData.rollNumber.trim() !== ""
+              ? extraData.rollNumber
+              : userSnap.exists() ? userSnap.data().roll_number : ""),
+          academic_year:
+            (extraData && extraData.academicYear && extraData.academicYear.trim() !== ""
+              ? extraData.academicYear
+              : userSnap.exists() ? userSnap.data().academic_year : ""),
           points: userSnap.exists() ? userSnap.data().points || 0 : 0,
-          profile_image: githubPhotoURL || (userSnap.exists() ? userSnap.data().profile_image : ""),
+          profile_image:
+            defaultPhotoURL || (userSnap.exists() ? userSnap.data().profile_image : ""),
           lastLogin: serverTimestamp(),
         };
 
-        // If document exists, update; otherwise, create new document.
         if (userSnap.exists()) {
           await updateDoc(userRef, updateData);
         } else {
@@ -58,7 +65,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           });
         }
 
-        // Clear stored extra form data after first login update.
+        // Clear the stored form data after first login upsert
         if (storedFormData) {
           localStorage.removeItem("userFormData");
         }
