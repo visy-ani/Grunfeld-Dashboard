@@ -50,7 +50,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const userSnap = await getDoc(userRef);
 
         // Build the update object using extra form data.
-        const updateData: any = {
+        const updateData = {
           name:
             (extraData && extraData.name) ||
             user.displayName ||
