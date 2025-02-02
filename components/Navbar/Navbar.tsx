@@ -2,13 +2,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
-import { Github } from "lucide-react";
 import Bronze from "@/ui/Badges/Common";
 import { auth, db } from "@/lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import styles from "@/styles/Navbar.module.css";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface Profile {
   id: string;
@@ -24,18 +23,22 @@ const Navbar: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (auth.currentUser) {
-        const userRef = doc(db, "profiles", auth.currentUser.uid);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Once the user is restored, fetch the profile from Firestore.
+        const userRef = doc(db, "profiles", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
           setProfile({ id: userSnap.id, ...userSnap.data() } as Profile);
         }
+      } else {
+        setProfile(null);
       }
-    };
+    });
 
-    fetchUserProfile();
+    return () => unsubscribe();
   }, []);
+
 
   return (
     <nav className={styles.navbar}>
