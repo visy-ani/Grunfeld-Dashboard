@@ -19,14 +19,14 @@ interface User {
   name: string;
   username: string;
   rollNumber: string;
-  academicYear: number;
+  academicYear: string;
   points: number;
   profileImage: string;
   githubProfile: string;
 }
 
 interface FilterState {
-  academicYears: number[];
+  academicYears: string[];
   pointsRanges: string[];
 }
 
@@ -81,7 +81,7 @@ const SearchPanel: React.FC = () => {
             name: data.name,
             username: data.username || "", // Make sure this field is updated in your login flow
             rollNumber: data.roll_number,
-            academicYear: Number(data.academic_year),
+            academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
             githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
@@ -104,7 +104,7 @@ const SearchPanel: React.FC = () => {
     setIsFilterOpen((prev) => !prev);
   };
 
-  const handleAcademicYearFilter = (year: number) => {
+  const handleAcademicYearFilter = (year: string) => {
     setFilters((prev) => ({
       ...prev,
       academicYears: prev.academicYears.includes(year)
@@ -148,6 +148,8 @@ const SearchPanel: React.FC = () => {
     });
   }, [users, searchTerm, filters]);
 
+  const academicYearOptions = ["First Year", "Second Year", "Third Year", "Fourth Year"];
+
   return (
     <div className={styles.container}>
       <div className={styles.searchBar}>
@@ -167,9 +169,10 @@ const SearchPanel: React.FC = () => {
         <div className={styles.filterContainer}>
           <div className={styles.filterSection}>
             <h4>Academic Year</h4>
-            {[2022, 2023, 2024].map((year) => (
+            {academicYearOptions.map((year) => (
               <label key={year} className={styles.filterOption}>
                 <Checkbox
+                  className={styles.checkbox}
                   checked={filters.academicYears.includes(year)}
                   onCheckedChange={() => handleAcademicYearFilter(year)}
                 />
@@ -182,6 +185,7 @@ const SearchPanel: React.FC = () => {
             {["low", "medium", "high"].map((range) => (
               <label key={range} className={styles.filterOption}>
                 <Checkbox
+                  className={styles.checkbox}
                   checked={filters.pointsRanges.includes(range)}
                   onCheckedChange={() => handlePointsRangeFilter(range)}
                 />

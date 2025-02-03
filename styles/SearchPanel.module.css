@@ -3,7 +3,6 @@
   flex-direction: column;
   width: 100%;
   margin: auto;
-  padding: 16px;
   background-color: #0a0a0a;
   color: #e0e0e0;
 }
@@ -79,8 +78,9 @@
 
 .filterSection {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
@@ -89,6 +89,8 @@
   margin-bottom: 8px;
   font-size: 14px;
   text-transform: uppercase;
+  display: block;
+  width: 100%;
 }
 
 .filterOption {
@@ -98,10 +100,51 @@
   color: #e0e0e0;
   cursor: pointer;
   transition: color 0.3s ease;
+  margin-right: 2rem;
 }
 
 .filterOption:hover {
   color: #fff;
+}
+
+.checkbox {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid #4a4a4a;
+  border-radius: 4px;
+  background-color: #1f293780;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.checkbox:hover {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.checkbox:checked {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.checkbox:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  color: white;
+  font-size: 12px;
+  opacity: 0;
+  animation: checkAnimation 0.3s ease-in-out forwards;
+}
+
+.checkbox:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
 .leaderboardHeader {
@@ -251,7 +294,7 @@
   }
 
   .profileDetails {
-    padding: 0 10px;
+    padding: 0 20px;
   }
 
   .userPoints {
@@ -260,11 +303,23 @@
     padding-right: 20px;
   }
 
-  .profileImage {
-    
+  .userName{
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
+}
 
-  .badge {
-   
+
+
+@keyframes checkAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
