@@ -94,7 +94,6 @@ const SearchPanel: React.FC = () => {
 
     fetchUsers();
   }, []);
-  
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -123,83 +122,92 @@ const SearchPanel: React.FC = () => {
   };
 
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
-      const matchesSearch =
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesAcademicYear =
-        filters.academicYears.length === 0 ||
-        filters.academicYears.includes(user.academicYear);
-      const matchesPointsRange =
-        filters.pointsRanges.length === 0 ||
-        filters.pointsRanges.some((range) => {
-          switch (range) {
-            case "low":
-              return user.points < 1000;
-            case "medium":
-              return user.points >= 1000 && user.points < 1200;
-            case "high":
-              return user.points >= 1200;
-            default:
-              return false;
-          }
-        });
-      return matchesSearch && matchesAcademicYear && matchesPointsRange;
-    }).sort((firstUser, secondUser) => secondUser.points - firstUser.points);
+    return users
+      .filter((user) => {
+        const matchesSearch =
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesAcademicYear =
+          filters.academicYears.length === 0 ||
+          filters.academicYears.includes(user.academicYear);
+        const matchesPointsRange =
+          filters.pointsRanges.length === 0 ||
+          filters.pointsRanges.some((range) => {
+            switch (range) {
+              case "low":
+                return user.points < 1000;
+              case "medium":
+                return user.points >= 1000 && user.points < 1200;
+              case "high":
+                return user.points >= 1200;
+              default:
+                return false;
+            }
+          });
+        return matchesSearch && matchesAcademicYear && matchesPointsRange;
+      })
+      .sort((firstUser, secondUser) => secondUser.points - firstUser.points);
   }, [users, searchTerm, filters]);
 
-  const academicYearOptions = ["First Year", "Second Year", "Third Year", "Fourth Year"];
+  const academicYearOptions = [
+    "First Year",
+    "Second Year",
+    "Third Year",
+    "Fourth Year",
+  ];
 
   return (
     <div className={styles.container}>
-      <div className={styles.searchBar}>
-        <Search className={styles.icon} />
-        <Input
-          placeholder="Search profiles..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className={styles.input}
-        />
-        <Button onClick={toggleFilterOpen} className={styles.filterButton}>
-          <Filter />
-        </Button>
-      </div>
-
-      {isFilterOpen && (
-        <div className={styles.filterContainer}>
-          <div className={styles.filterSection}>
-            <h4>Academic Year</h4>
-            {academicYearOptions.map((year) => (
-              <label key={year} className={styles.filterOption}>
-                <Checkbox
-                  className={styles.checkbox}
-                  checked={filters.academicYears.includes(year)}
-                  onCheckedChange={() => handleAcademicYearFilter(year)}
-                />
-                {year}
-              </label>
-            ))}
-          </div>
-          <div className={styles.filterSection}>
-            <h4>Points Range</h4>
-            {["low", "medium", "high"].map((range) => (
-              <label key={range} className={styles.filterOption}>
-                <Checkbox
-                  className={styles.checkbox}
-                  checked={filters.pointsRanges.includes(range)}
-                  onCheckedChange={() => handlePointsRangeFilter(range)}
-                />
-                {range.charAt(0).toUpperCase() + range.slice(1)}
-              </label>
-            ))}
-          </div>
+      <div className={styles.stickyContainer}>
+        <div className={styles.searchBar}>
+          <Search className={styles.icon} />
+          <Input
+            placeholder="Search profiles..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.input}
+          />
+          <Button onClick={toggleFilterOpen} className={styles.filterButton}>
+            <Filter />
+          </Button>
         </div>
-      )}
 
-      <div className={styles.leaderboardHeader}>
-        <div className={styles.headerRank}>Rank</div>
-        <div className={styles.headerProfile}>Profile</div>
-        <div className={styles.headerPoints}>Points</div>
+        {isFilterOpen && (
+          <div className={styles.filterContainer}>
+            <div className={styles.filterSection}>
+              <h4>Academic Year</h4>
+              {academicYearOptions.map((year) => (
+                <label key={year} className={styles.filterOption}>
+                  <Checkbox
+                    className={styles.checkbox}
+                    checked={filters.academicYears.includes(year)}
+                    onCheckedChange={() => handleAcademicYearFilter(year)}
+                  />
+                  {year}
+                </label>
+              ))}
+            </div>
+            <div className={styles.filterSection}>
+              <h4>Points Range</h4>
+              {["low", "medium", "high"].map((range) => (
+                <label key={range} className={styles.filterOption}>
+                  <Checkbox
+                    className={styles.checkbox}
+                    checked={filters.pointsRanges.includes(range)}
+                    onCheckedChange={() => handlePointsRangeFilter(range)}
+                  />
+                  {range.charAt(0).toUpperCase() + range.slice(1)}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className={styles.leaderboardHeader}>
+          <div className={styles.headerRank}>Rank</div>
+          <div className={styles.headerProfile}>Profile</div>
+          <div className={styles.headerPoints}>Points</div>
+        </div>
       </div>
 
       {filteredUsers.map((user) => (
