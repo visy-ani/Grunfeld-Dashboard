@@ -1,4 +1,3 @@
-// components/SearchPanel.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
@@ -30,22 +29,22 @@ interface FilterState {
   pointsRanges: string[];
 }
 
-const getBadgeComponent = (points: number, rank: number) => {
-  if (rank === 1) {
+const getBadgeComponent = (points: number) => {
+  if (points >= 1000) {
     return (
       <div className={`${styles.badge} ${styles.legendaryGlow}`}>
         <Legendary />
       </div>
     );
   }
-  if (rank === 2) {
+  if (points >= 500) {
     return (
       <div className={`${styles.badge} ${styles.epicGlow}`}>
         <Epic />
       </div>
     );
   }
-  if (rank === 3) {
+  if (points >= 200) {
     return (
       <div className={`${styles.badge} ${styles.rareGlow}`}>
         <Rare />
@@ -95,6 +94,7 @@ const SearchPanel: React.FC = () => {
 
     fetchUsers();
   }, []);
+  
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -145,7 +145,7 @@ const SearchPanel: React.FC = () => {
           }
         });
       return matchesSearch && matchesAcademicYear && matchesPointsRange;
-    });
+    }).sort((firstUser, secondUser) => secondUser.points - firstUser.points);
   }, [users, searchTerm, filters]);
 
   const academicYearOptions = ["First Year", "Second Year", "Third Year", "Fourth Year"];
@@ -202,9 +202,9 @@ const SearchPanel: React.FC = () => {
         <div className={styles.headerPoints}>Points</div>
       </div>
 
-      {filteredUsers.map((user, index) => (
+      {filteredUsers.map((user) => (
         <div key={user.id} className={styles.userRow}>
-          <div className={styles.badge}>{getBadgeComponent(user.points, index + 1)}</div>
+          <div className={styles.badge}>{getBadgeComponent(user.points)}</div>
           <div className={styles.profileDetails}>
             <div className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
