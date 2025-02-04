@@ -1,22 +1,84 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, ChangeEvent, useMemo } from "react";
 import styles from "@/styles/SchedulePanel.module.css";
-import { SCHEDULE_DATA } from "./ScheduleData";
-import { ClassSchedule } from "@/types/types";
+import { SCHEDULE_DATA } from "./ScheduleData"; // Remove or comment this out if using Supabase entirely.
+import { ClassSchedule } from "@/types/types";  // Ensure your type reflects your Supabase schema.
 import { Clock, MapPin, User } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 const SchedulePanel: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [classes, setClasses] = useState<ClassSchedule[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
+  // Helper function to format date keys (YYYY-MM-DD)
   const formatDateKey = (date: Date): string => {
-    return date.toISOString().split("T")[0]; 
+    return date.toISOString().split("T")[0];
   };
 
-  const getScheduledClasses = (date: Date): ClassSchedule[] => {
-    const key = formatDateKey(date);
-    return SCHEDULE_DATA[key] ? SCHEDULE_DATA[key].classes : [];
+  // Function to fetch scheduled classes from Supabase for a given date.
+  const fetchScheduledClasses = async (date: Date) => {
+    setLoading(true);
+    const dateKey = formatDateKey(date);
+    try {
+      // Query the class_schedule table for classes on the selected date.
+      const { data, error } = await supabase
+        .from("class_schedule")
+        .select("*")
+        .eq("schedule_date", dateKey);
+      if (error) {
+        console.error("Error fetching classes:", error);
+      } else {
+        // Ensure data is sorted by time.
+        const sortedClasses = (data || []).sort((a, b) => {
+          const timeA = new Date(`1970-01-01T${a.time}`).getTime();
+          const timeB = new Date(`1970-01-01T${b.time}`).getTime();
+          return timeA - timeB;
+        });
+        setClasses(sortedClasses as ClassSchedule[]);
+      }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Fetch classes on mount and whenever the selected date changes.
+  useEffect(() => {
+    fetchScheduledClasses(selectedDate);
+
+    // Set up a realtime subscription to class_schedule table
+    const channel = supabase
+    .channel("public:class_schedule")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "class_schedule",
+        filter: `schedule_date=eq.${formatDateKey(selectedDate)}`,
+      },
+      (payload) => {
+        console.log("New class inserted:", payload.new);
+        setClasses((prevClasses) => {
+          const newList = [...prevClasses, payload.new as ClassSchedule];
+          return newList.sort((a, b) => {
+            const timeA = new Date(`1970-01-01T${a.time}`).getTime();
+            const timeB = new Date(`1970-01-01T${b.time}`).getTime();
+            return timeA - timeB;
+          });
+        });
+      }
+    )
+    .subscribe();
+
+  // Cleanup subscription when the component unmounts or the selected date changes.
+  return () => {
+    channel.unsubscribe();
+  };
+}, [selectedDate]);
 
   const formatDate = (date: Date, options: Intl.DateTimeFormatOptions) =>
     new Intl.DateTimeFormat("en-US", options).format(date);
@@ -36,20 +98,14 @@ const SchedulePanel: React.FC = () => {
     return formatMonth(date);
   };
 
-  // Fix: Ensure dates are correctly generated for 7 days ahead
+  // Generate dates for the next 7 days.
   const weekDates = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     return {
       weekday: formatWeekday(date),
-      fullDate: new Date(date), 
+      fullDate: new Date(date),
     };
-  });
-
-  const scheduledClasses = getScheduledClasses(selectedDate).sort((a, b) => {
-    const timeA = new Date(`1970-01-01T${a.time}`).getTime();
-    const timeB = new Date(`1970-01-01T${b.time}`).getTime();
-    return timeA - timeB;
   });
 
   return (
@@ -73,10 +129,14 @@ const SchedulePanel: React.FC = () => {
       <div className={styles.weekSelector}>
         {weekDates.map((item) => (
           <button
-            key={item.fullDate.toISOString()} 
-            onClick={() => setSelectedDate(new Date(item.fullDate))} 
+            key={item.fullDate.toISOString()}
+            onClick={() => {
+              setSelectedDate(new Date(item.fullDate));
+            }}
             className={`${styles.weekButton} ${
-              selectedDate.toDateString() === item.fullDate.toDateString() ? styles.active : ""
+              selectedDate.toDateString() === item.fullDate.toDateString()
+                ? styles.active
+                : ""
             }`}
           >
             <span className={styles.weekday}>{item.weekday}</span>
@@ -87,16 +147,17 @@ const SchedulePanel: React.FC = () => {
 
       <div className={styles.scheduleContainer}>
         <h3 className={styles.scheduleHeader}>Schedule</h3>
-
-        {scheduledClasses.length === 0 ? (
+        {loading ? (
+          <div className={styles.noClasses}>Loading...</div>
+        ) : classes.length === 0 ? (
           <div className={styles.noClasses}>
             No classes scheduled for {formatMonth(selectedDate)}
           </div>
         ) : (
           <div className={styles.scheduleList}>
-            {scheduledClasses.map((cls) => (
+            {classes.map((cls) => (
               <div key={cls.id} className={styles.scheduleItem}>
-                <div className={styles.className}>{cls.name}</div>
+                <div className={styles.className}>{cls.class_name}</div>
                 <div className={styles.classInstructor}>
                   <User size={14} className={styles.icon} /> {cls.instructor}
                 </div>

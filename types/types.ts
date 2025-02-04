@@ -6,7 +6,7 @@ export interface ProfileProps {
 
 export interface ClassSchedule {
   id: number;
-  name: string;
+  class_name: string;
   time: string;
   instructor: string;
   room: string;
