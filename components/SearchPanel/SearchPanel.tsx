@@ -78,12 +78,12 @@ const SearchPanel: React.FC = () => {
           usersList.push({
             id: doc.id,
             name: data.name,
-            username: data.username || "", // Make sure this field is updated in your login flow
+            username: data.username || "", 
             rollNumber: data.roll_number,
             academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
-            githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
+            githubProfile: data.github_profile, 
           });
         });
         setUsers(usersList);
