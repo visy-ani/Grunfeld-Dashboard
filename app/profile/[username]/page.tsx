@@ -12,6 +12,7 @@ import { db } from "@/lib/firebaseClient";
 import Image from "next/image";
 import About from "@/components/About/About"
 import Collections from '@/components/Collections/Collections'
+import Loader from "@/ui/Loader";
 
 interface User {
   id: string;
@@ -101,7 +102,9 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
   const currentUser = users.find((user) => user.username === username);
 
   // Wait until both the username and user data are available
-  if (!username || !currentUser) return <div>Loading...</div>;
+  if (!username || !currentUser) return(
+    <Loader/>
+  ) 
 
   return (
     <div className={styles.container}>

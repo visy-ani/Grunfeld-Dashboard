@@ -12,6 +12,7 @@ import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
+import Link from "next/link";
 
 interface User {
   id: string;
@@ -214,12 +215,11 @@ const SearchPanel: React.FC = () => {
         <div key={user.id} className={styles.userRow}>
           <div className={styles.badge}>{getBadgeComponent(user.points)}</div>
           <div className={styles.profileDetails}>
-            <div className={styles.userInfo}>
+            <Link href={`/profile/${user.username}`} className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
-            </div>
+            </Link>
             <a
-              // Use the stored GitHub URL if valid, otherwise build it from the username.
               href={
                 user.githubProfile && user.githubProfile.startsWith("http")
                   ? user.githubProfile

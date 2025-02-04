@@ -7,6 +7,7 @@ import { auth, db } from "@/lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import styles from "@/styles/Navbar.module.css";
 import { onAuthStateChanged } from "firebase/auth";
+import Link from "next/link";
 
 interface Profile {
   id: string;
@@ -16,6 +17,7 @@ interface Profile {
   github_profile: string;
   profile_image: string;
   points: number;
+  username: string;
 }
 
 const Navbar: React.FC = () => {
@@ -50,7 +52,7 @@ const Navbar: React.FC = () => {
 
       {profile && (
         <div className={styles.navProfileContainer}>
-          <div className={styles.userProfile}>
+          <Link href={`/profile/${profile.username}`} className={styles.userProfile}>
             <Image
               src={profile.profile_image || "https://avatar.iran.liara.run/public"}
               alt="User Profile"
@@ -62,7 +64,7 @@ const Navbar: React.FC = () => {
               <span className={styles.userName}>{profile.name}</span>
               <span className={styles.userRoll}>{profile.roll_number}</span>
             </div>
-          </div>
+          </Link>
           <div className={styles.navProfile}>
             <div className={styles.profileName}>
               <span className={styles.rank}>Trainee</span>
