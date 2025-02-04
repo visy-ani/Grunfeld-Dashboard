@@ -1,4 +1,3 @@
-// components/SearchPanel.tsx
 "use client";
 
 import React, { useState, useMemo, useEffect, ChangeEvent } from "react";
@@ -19,33 +18,33 @@ interface User {
   name: string;
   username: string;
   rollNumber: string;
-  academicYear: number;
+  academicYear: string;
   points: number;
   profileImage: string;
   githubProfile: string;
 }
 
 interface FilterState {
-  academicYears: number[];
+  academicYears: string[];
   pointsRanges: string[];
 }
 
-const getBadgeComponent = (points: number, rank: number) => {
-  if (rank === 1) {
+const getBadgeComponent = (points: number) => {
+  if (points >= 1000) {
     return (
       <div className={`${styles.badge} ${styles.legendaryGlow}`}>
         <Legendary />
       </div>
     );
   }
-  if (rank === 2) {
+  if (points >= 500) {
     return (
       <div className={`${styles.badge} ${styles.epicGlow}`}>
         <Epic />
       </div>
     );
   }
-  if (rank === 3) {
+  if (points >= 200) {
     return (
       <div className={`${styles.badge} ${styles.rareGlow}`}>
         <Rare />
@@ -81,7 +80,7 @@ const SearchPanel: React.FC = () => {
             name: data.name,
             username: data.username || "", // Make sure this field is updated in your login flow
             rollNumber: data.roll_number,
-            academicYear: Number(data.academic_year),
+            academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
             githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
@@ -104,7 +103,7 @@ const SearchPanel: React.FC = () => {
     setIsFilterOpen((prev) => !prev);
   };
 
-  const handleAcademicYearFilter = (year: number) => {
+  const handleAcademicYearFilter = (year: string) => {
     setFilters((prev) => ({
       ...prev,
       academicYears: prev.academicYears.includes(year)
@@ -123,84 +122,97 @@ const SearchPanel: React.FC = () => {
   };
 
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
-      const matchesSearch =
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesAcademicYear =
-        filters.academicYears.length === 0 ||
-        filters.academicYears.includes(user.academicYear);
-      const matchesPointsRange =
-        filters.pointsRanges.length === 0 ||
-        filters.pointsRanges.some((range) => {
-          switch (range) {
-            case "low":
-              return user.points < 1000;
-            case "medium":
-              return user.points >= 1000 && user.points < 1200;
-            case "high":
-              return user.points >= 1200;
-            default:
-              return false;
-          }
-        });
-      return matchesSearch && matchesAcademicYear && matchesPointsRange;
-    });
+    return users
+      .filter((user) => {
+        const matchesSearch =
+          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.rollNumber.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesAcademicYear =
+          filters.academicYears.length === 0 ||
+          filters.academicYears.includes(user.academicYear);
+        const matchesPointsRange =
+          filters.pointsRanges.length === 0 ||
+          filters.pointsRanges.some((range) => {
+            switch (range) {
+              case "low":
+                return user.points < 1000;
+              case "medium":
+                return user.points >= 1000 && user.points < 1200;
+              case "high":
+                return user.points >= 1200;
+              default:
+                return false;
+            }
+          });
+        return matchesSearch && matchesAcademicYear && matchesPointsRange;
+      })
+      .sort((firstUser, secondUser) => secondUser.points - firstUser.points);
   }, [users, searchTerm, filters]);
+
+  const academicYearOptions = [
+    "First Year",
+    "Second Year",
+    "Third Year",
+    "Fourth Year",
+  ];
 
   return (
     <div className={styles.container}>
-      <div className={styles.searchBar}>
-        <Search className={styles.icon} />
-        <Input
-          placeholder="Search profiles..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          className={styles.input}
-        />
-        <Button onClick={toggleFilterOpen} className={styles.filterButton}>
-          <Filter />
-        </Button>
-      </div>
-
-      {isFilterOpen && (
-        <div className={styles.filterContainer}>
-          <div className={styles.filterSection}>
-            <h4>Academic Year</h4>
-            {[2022, 2023, 2024].map((year) => (
-              <label key={year} className={styles.filterOption}>
-                <Checkbox
-                  checked={filters.academicYears.includes(year)}
-                  onCheckedChange={() => handleAcademicYearFilter(year)}
-                />
-                {year}
-              </label>
-            ))}
-          </div>
-          <div className={styles.filterSection}>
-            <h4>Points Range</h4>
-            {["low", "medium", "high"].map((range) => (
-              <label key={range} className={styles.filterOption}>
-                <Checkbox
-                  checked={filters.pointsRanges.includes(range)}
-                  onCheckedChange={() => handlePointsRangeFilter(range)}
-                />
-                {range.charAt(0).toUpperCase() + range.slice(1)}
-              </label>
-            ))}
-          </div>
+      <div className={styles.stickyContainer}>
+        <div className={styles.searchBar}>
+          <Search className={styles.icon} />
+          <Input
+            placeholder="Search profiles..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className={styles.input}
+          />
+          <Button onClick={toggleFilterOpen} className={styles.filterButton}>
+            <Filter />
+          </Button>
         </div>
-      )}
 
-      <div className={styles.leaderboardHeader}>
-        <div className={styles.headerRank}>Rank</div>
-        <div className={styles.headerProfile}>Profile</div>
-        <div className={styles.headerPoints}>Points</div>
+        {isFilterOpen && (
+          <div className={styles.filterContainer}>
+            <div className={styles.filterSection}>
+              <h4>Academic Year</h4>
+              {academicYearOptions.map((year) => (
+                <label key={year} className={styles.filterOption}>
+                  <Checkbox
+                    className={styles.checkbox}
+                    checked={filters.academicYears.includes(year)}
+                    onCheckedChange={() => handleAcademicYearFilter(year)}
+                  />
+                  {year}
+                </label>
+              ))}
+            </div>
+            <div className={styles.filterSection}>
+              <h4>Points Range</h4>
+              {["low", "medium", "high"].map((range) => (
+                <label key={range} className={styles.filterOption}>
+                  <Checkbox
+                    className={styles.checkbox}
+                    checked={filters.pointsRanges.includes(range)}
+                    onCheckedChange={() => handlePointsRangeFilter(range)}
+                  />
+                  {range.charAt(0).toUpperCase() + range.slice(1)}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className={styles.leaderboardHeader}>
+          <div className={styles.headerRank}>Rank</div>
+          <div className={styles.headerProfile}>Profile</div>
+          <div className={styles.headerPoints}>Points</div>
+        </div>
       </div>
 
-      {filteredUsers.map((user, index) => (
+      {filteredUsers.map((user) => (
         <div key={user.id} className={styles.userRow}>
-          <div className={styles.badge}>{getBadgeComponent(user.points, index + 1)}</div>
+          <div className={styles.badge}>{getBadgeComponent(user.points)}</div>
           <div className={styles.profileDetails}>
             <div className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>

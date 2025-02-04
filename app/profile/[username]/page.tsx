@@ -35,12 +35,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
 
   return (
     <div className={styles.profileContainer}>
-      <h1>Profile of {profileData.name}</h1>
-      <div className={styles.profileCard}>
-        <h2>{profileData.name}</h2>
-        <p><strong>Email:</strong> {profileData.email}</p>
-        <p><strong>Role:</strong> {profileData.role}</p>
-      </div>
+      
     </div>
   );
 };

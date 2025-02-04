@@ -43,7 +43,7 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-.weekButton:hover {
+.weekButton:hover:not(.active) {
   background-color: #2d2d2d;
 }
 
@@ -53,7 +53,7 @@
 
 .weekday {
   font-size: 0.875rem;
-  color: gray;
+  color: #cecece;
 }
 
 .dateNumber {
@@ -158,3 +158,10 @@
   background-color: #1d4ed8;
 }
   
+
+@media (max-width: 768px) {
+  .scheduleContainer{
+    flex: none;
+    min-height: calc(100vh - 26rem);
+  }
+}
