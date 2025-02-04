@@ -53,6 +53,11 @@ const LoginPage: React.FC = () => {
       setError("Roll Number must be exactly 5 characters");
       return false;
     }
+
+    if (!/^\d+$/.test(formData.rollNumber)) {
+      setError("Roll Number must contain only numeric digits");
+      return false;
+    }
     return true;
   };
 
