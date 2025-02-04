@@ -1,0 +1,37 @@
+.loaderContainer {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0a0a0a;
+  }
+  
+  .loaderContent {
+    display: flex;
+    align-items: center;
+  }
+  
+  .loadingText {
+    color: white;
+    font-size: 2rem;
+    font-family: monospace;
+  }
+  
+  .dotsContainer {
+    color: white;
+    font-size: 2rem;
+    width: 4rem;
+    display: inline-block;
+  }
+  
+  .dot {
+    display: inline-block;
+    animation: bounce 1s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  

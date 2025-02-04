@@ -1,0 +1,68 @@
+.multiCollectionCard {
+  padding: 1.5rem 0;
+  width: 100%;
+  max-width: 73%;
+  background-color: #1f293780;
+  border: 1px solid #374151;
+  border-radius: .75rem;
+}
+
+
+@media (max-width: 768px) {
+  .multiCollectionCard {
+    max-width: 100%;
+    padding: 1rem 0 0 0;
+  }
+}
+
+.collectionContainer {
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+.collectionTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.scrollContainerWrapper {
+  position: relative;
+}
+
+.scrollContainer {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 1rem 1.5rem;
+  gap: 2rem;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.item {
+  flex-shrink: 0;
+  width: 12rem;
+  height: 18rem;
+  border-radius: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.item:hover {
+  transform: scale(1.05);
+}
+
+.imagePlaceholder {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 2;
+  background-blend-mode: overlay;
+}

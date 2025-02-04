@@ -1,4 +1,3 @@
-// pages/login.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -52,6 +51,11 @@ const LoginPage: React.FC = () => {
     // Change validation length as needed (here rollNumber is 5 characters as per your code)
     if (formData.rollNumber.length !== 5) {
       setError("Roll Number must be exactly 5 characters");
+      return false;
+    }
+
+    if (!/^\d+$/.test(formData.rollNumber)) {
+      setError("Roll Number must contain only numeric digits");
       return false;
     }
     return true;

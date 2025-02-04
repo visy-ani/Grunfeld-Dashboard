@@ -12,6 +12,7 @@ import Epic from "@/ui/Badges/Epic";
 import Legendary from "@/ui/Badges/Legendary";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
+import Link from "next/link";
 
 interface User {
   id: string;
@@ -78,12 +79,12 @@ const SearchPanel: React.FC = () => {
           usersList.push({
             id: doc.id,
             name: data.name,
-            username: data.username || "", // Make sure this field is updated in your login flow
+            username: data.username || "", 
             rollNumber: data.roll_number,
             academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
-            githubProfile: data.github_profile, // should be something like "https://www.github.com/{username}"
+            githubProfile: data.github_profile, 
           });
         });
         setUsers(usersList);
@@ -214,12 +215,11 @@ const SearchPanel: React.FC = () => {
         <div key={user.id} className={styles.userRow}>
           <div className={styles.badge}>{getBadgeComponent(user.points)}</div>
           <div className={styles.profileDetails}>
-            <div className={styles.userInfo}>
+            <Link href={`/profile/${user.username}`} className={styles.userInfo}>
               <span className={styles.userName}>{user.name}</span>
               <span className={styles.userHierarchy}>{user.rollNumber}</span>
-            </div>
+            </Link>
             <a
-              // Use the stored GitHub URL if valid, otherwise build it from the username.
               href={
                 user.githubProfile && user.githubProfile.startsWith("http")
                   ? user.githubProfile

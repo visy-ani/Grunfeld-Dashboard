@@ -2,7 +2,7 @@
   background-color: #0a0a0a;
   color: white;
   width: 100%;
-  height: calc(100vh - 90px);
+  min-height: calc(100vh - 90px);
   display: flex;
   flex-direction: column;
 }
@@ -163,5 +163,8 @@
   .scheduleContainer{
     flex: none;
     min-height: calc(100vh - 26rem);
+  }
+  .weekButton{
+    height: 4.5rem;
   }
 }
