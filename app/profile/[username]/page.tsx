@@ -170,7 +170,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
 
       <div className={styles.mainContainer}>
         <About/>
-        <Collections/>
+        <Collections rollNumber={currentUser.rollNumber}/>
       </div>
     </div>
   );

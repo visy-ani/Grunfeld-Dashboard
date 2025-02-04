@@ -1,57 +1,37 @@
-import React, { useRef } from "react";
+"use client";
+
+import React from "react";
 import styles from "@/styles/Collections.module.css";
 import Image from "next/image";
-import hawkeye from "@/public/Hawkeye.svg";
-
-interface Item {
-  common?: string;
-  rare?: string;
-  epic?: string;
-  legendary?: string;
-}
+import { useUserCollections } from "@/hooks/useUserCollections";
 
 interface Collection {
   name: string;
-  items: Item[];
+  items: Array<{ [key: string]: string }>;
 }
 
-interface CollectionScrollContainerProps {
-  collection: Collection;
+interface MultiCollectionCardProps {
+  collections: Collection[];
 }
 
-const rarityColors: { [key: string]: string } = {
-  common: "rgba(43, 0, 255, 0.5)",
-  rare: "rgba(0, 255, 42, 0.276)",
-  epic: "rgba(64, 29, 107, 0.584)",
-  legendary: "rgba(222, 78, 16, 0.584)",
-};
-
-const CollectionScrollContainer: React.FC<CollectionScrollContainerProps> = ({
-  collection,
-}) => {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
-
+const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ collection }) => {
   return (
     <div className={styles.collectionContainer}>
       <h2 className={styles.collectionTitle}>{collection.name}</h2>
-
       <div className={styles.scrollContainerWrapper}>
-        <div ref={scrollRef} className={styles.scrollContainer}>
+        <div className={styles.scrollContainer}>
           {collection.items.map((item, index) => {
-            const rarity = Object.keys(item)[0]; // Get rarity key
-            const glowColor = rarityColors[rarity] || "rgba(0, 0, 0, 0)"; // Default to no glow
-
+            // For each badge item, extract its rarity and URL.
+            const rarity = Object.keys(item)[0];
+            const badgeUrl = item[rarity];
             return (
               <Image
                 key={index}
                 className={styles.item}
-                src={hawkeye}
+                src={badgeUrl}
                 width={300}
                 height={400}
-                style={{
-                  filter: `blur(0) drop-shadow(0 4px 16px ${glowColor})`,
-                }}
-                alt={`Item ${index} (${rarity})`}
+                alt={`Badge ${index} (${rarity})`}
               />
             );
           })}
@@ -61,13 +41,7 @@ const CollectionScrollContainer: React.FC<CollectionScrollContainerProps> = ({
   );
 };
 
-interface MultiCollectionCardProps {
-  collections: Collection[];
-}
-
-const MultiCollectionCard: React.FC<MultiCollectionCardProps> = ({
-  collections,
-}) => {
+const MultiCollectionCard: React.FC<MultiCollectionCardProps> = ({ collections }) => {
   return (
     <div className={styles.multiCollectionCard}>
       {collections.map((collection, index) => (
@@ -77,29 +51,13 @@ const MultiCollectionCard: React.FC<MultiCollectionCardProps> = ({
   );
 };
 
-const Collections: React.FC = () => {
-  const sampleCollections: Collection[] = [
-    {
-      name: "Superhero Collection",
-      items: [
-        { common: "url" },
-        { rare: "url" },
-        { epic: "url" },
-        { legendary: "url" },
-      ],
-    },
-    {
-      name: "Villain Collection",
-      items: [
-        { common: "url" },
-        { rare: "url" },
-        { epic: "url" },
-        { legendary: "url" },
-      ],
-    },
-  ];
+const Collections: React.FC<{ rollNumber: string }> = ({ rollNumber }) => {
+  const { collections, loading } = useUserCollections(rollNumber);
 
-  return <MultiCollectionCard collections={sampleCollections} />;
+  if (loading) return <p>Loading collections...</p>;
+  if (collections.length === 0) return <p>No badges allocated yet.</p>;
+
+  return <MultiCollectionCard collections={collections} />;
 };
 
 export default Collections;
