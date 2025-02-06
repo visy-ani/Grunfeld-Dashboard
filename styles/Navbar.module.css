@@ -1,19 +1,30 @@
 .navbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   padding: 1rem 1.5rem;
   background-color: #0a0a0a;
   color: white;
   height: auto;
 }
 
-/* Heading */
 .heading {
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   width: 40%;
   padding: 0 1rem;
 }
@@ -24,38 +35,21 @@
   position: relative;
   display: inline-block;
   z-index: 1;
-  text-wrap: nowrap;
+  white-space: nowrap;
 }
 
-.headingEffect {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(1rem);
-  background: radial-gradient(
-    ellipse,
-    #f87171 0%,
-    #fbbf24 33%,
-    #60a5fa 66%,
-    #f87171 100%
-  );
-  animation: gradient 5s linear infinite;
-  background-size: 300% 100%;
-  z-index: -1;
-  height: 50%;
-  width: 120%;
-}
-
-/* Login Button */
 .loginButton {
   position: relative;
   border: none;
 }
 
 .loginButtonContent {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1.5rem;
   background-color: #0a0a0a;
@@ -77,29 +71,33 @@
   border-radius: 20px;
   background: transparent;
   border: 2px solid transparent;
-  background: linear-gradient(
-    90deg,
-    #f87171 0%,
-    #fbbf24 33%,
-    #60a5fa 66%,
-    #f87171 100%
-  );
+  background: -webkit-linear-gradient(90deg, #f87171 0%, #fbbf24 33%, #60a5fa 66%, #f87171 100%);
+  background: linear-gradient(90deg, #f87171 0%, #fbbf24 33%, #60a5fa 66%, #f87171 100%);
   background-size: 300% 100%;
-  animation: gradient 5s linear infinite;
+  -webkit-animation: gradient 5s linear infinite;
+          animation: gradient 5s linear infinite;
   padding: 2px;
-  filter: blur(0.3rem);
+  -webkit-filter: blur(0.3rem);
+          filter: blur(0.3rem);
 }
 
-/* Navbar Profile */
 .navProfileContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   width: 100%;
 }
 
 .userProfile {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   gap: 1rem;
   position: relative;
   padding-left: 1rem;
@@ -124,8 +122,13 @@
 }
 
 .userInfo {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   justify-content: center;
 }
 
@@ -141,14 +144,21 @@
 }
 
 .navProfile {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   height: 100%;
   gap: 0.5rem;
 }
 
 .profileName {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   align-items: flex-end;
   gap: 0.1rem;
 }
@@ -171,6 +181,18 @@
   filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
 }
 
+@-webkit-keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 150% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes gradient {
   0% {
     background-position: 0% 50%;
@@ -183,108 +205,92 @@
   }
 }
 
-/* MEDIA QUERIES */
-
-/* Tablet and small desktop */
 @media (max-width: 768px) {
   .navbar {
     padding: 0.75rem 1rem;
   }
-  
   .heading {
     width: 60%;
     padding: 0 0.5rem;
   }
-  
   .headingContent {
     font-size: 1.3rem;
   }
-  
   .loginButtonContent {
     padding: 0.4rem 1rem;
   }
-  
   .loginGithubIcon {
     width: 1.2rem;
     height: 1.2rem;
   }
-  
   .userProfile {
     gap: 0.75rem;
     padding-left: 0.5rem;
   }
-  
   .profilePic {
     height: 2.5rem;
     width: 2.5rem;
   }
-  
   .userName {
     font-size: 0.9rem;
   }
-  
   .userRoll {
     font-size: 0.8rem;
   }
-  
   .rank {
     font-size: 1.1rem;
   }
-  
   .points {
     font-size: 0.5rem;
     padding: 0.1rem 0.3rem;
   }
-  
   .badge {
     width: 3rem;
   }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
   .navbar {
-    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
     align-items: flex-start;
     padding: 0.9rem 0.5rem;
   }
-  
   .heading {
     display: none;
   }
-  
   .headingContent {
     font-size: 1.2rem;
   }
-  
   .loginButtonContent {
     padding: 0.4rem 1rem;
   }
-  
   .userProfile {
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
     align-items: flex-start;
     gap: 0.5rem;
     padding: 0.5rem;
   }
-  
   .profilePic {
     height: 2.5rem;
     width: 2.5rem;
   }
-  
   .userName {
     font-size: 0.9rem;
     cursor: default;
   }
-  
   .userRoll {
     font-size: 0.8rem;
     cursor: default;
   }
 }
 
-@media (max-width:320px) {
+@media (max-width: 320px) {
   .userName {
     font-size: 0.9rem;
     cursor: default;

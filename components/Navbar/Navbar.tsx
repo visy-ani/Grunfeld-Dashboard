@@ -40,7 +40,6 @@ const Navbar: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-
   return (
     <nav className={styles.navbar}>
       <h1 className={styles.heading}>
@@ -52,9 +51,14 @@ const Navbar: React.FC = () => {
 
       {profile && (
         <div className={styles.navProfileContainer}>
-          <Link href={`/profile/${profile.username}`} className={styles.userProfile}>
+          <Link
+            href={`/profile/${profile.username}`}
+            className={styles.userProfile}
+          >
             <Image
-              src={profile.profile_image || "https://avatar.iran.liara.run/public"}
+              src={
+                profile.profile_image || "https://avatar.iran.liara.run/public"
+              }
               alt="User Profile"
               className={styles.profilePic}
               width={100}
