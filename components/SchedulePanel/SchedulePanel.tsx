@@ -177,7 +177,7 @@ const SchedulePanel: React.FC = () => {
                     <Clock size={14} className={styles.icon} /> {cls.time}
                   </div>
                   <div className={styles.classRoom}>
-                    <MapPin size={14} className={styles.icon} /> Room {cls.room}
+                    <MapPin size={14} className={styles.icon} />{cls.room}
                   </div>
                 </div>
               </div>

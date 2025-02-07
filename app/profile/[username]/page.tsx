@@ -23,6 +23,7 @@ interface User {
   points: number;
   profileImage: string;
   githubProfile: string;
+  lastLogin: number;
 }
 
 const getBadgeComponent = (points: number) => {
@@ -67,15 +68,17 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
         const usersList: User[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
+          console.log(data)
           usersList.push({
             id: doc.id,
             name: data.name,
-            username: data.username || "", // Ensure this field is set correctly
+            username: data.username || "", 
             rollNumber: data.roll_number,
             academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
             githubProfile: data.github_profile,
+            lastLogin: data.lastLogin.seconds
           });
         });
         setUsers(usersList);
@@ -88,7 +91,6 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     fetchUsers();
   }, []);
 
-  // Resolve route parameters to get the username
   useEffect(() => {
     const fetchParams = async () => {
       const resolvedParams = await params;
@@ -98,13 +100,17 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     fetchParams();
   }, [params]);
 
-  // Find the current user based on the username
   const currentUser = users.find((user) => user.username === username);
 
-  // Wait until both the username and user data are available
   if (!username || !currentUser) return(
     <Loader/>
   ) 
+
+  const formatLastLogin = (lastLogin: number): string => {
+    const date = new Date(lastLogin * 1000); 
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short" };
+    return new Intl.DateTimeFormat("en-US", options).format(date);
+  }
 
   return (
     <div className={styles.container}>
@@ -151,7 +157,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           {/* Right Column */}
           <div className={styles.rightColumn}>
             <div className={styles.dateSection}>
-              <span className={styles.joinDate}>Jan 2024</span>
+              <span className={styles.joinDate}>{formatLastLogin(currentUser.lastLogin)}</span>
               <span className={styles.joinLabel}> Joined</span>
             </div>
             <div className={styles.separator} />

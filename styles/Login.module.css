@@ -1,6 +1,6 @@
 .container {
-  height: calc(var(--vh, 1vh) * 100);
-  background: black;
+  height: calc(var(--vh) * 100);
+  background: var(--background);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +12,7 @@
 .background {
   position: absolute;
   inset: 0;
-  background: black;
+  background: var(--login-background);
 }
 
 .header {
@@ -24,31 +24,31 @@
 .title {
   font-size: 3rem;
   font-weight: bold;
-  background: linear-gradient(to right, white, rgba(255, 255, 255, 0.5));
+  background: var(--loginText-gradient);
   -webkit-background-clip: text;
   color: transparent;
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--loginSubText);
 }
 
 .loginBox {
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--loginBox);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 2rem;
   width: 24rem;
-  box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 4px 10px var(--loginBox-shadow);
+  border: 1px solid var(--loginBox-border);
 }
 
 .alert {
   margin-bottom: 1.5rem;
-  background: rgba(255, 0, 0, 0.1);
-  border-color: rgba(255, 0, 0, 0.2);
-  color: rgba(255, 100, 100, 0.8);
+  background: var(--alert-background);
+  border-color: var(--alert-border);
+  color: var(--alert-text);
 }
 
 .inputGroup {
@@ -58,8 +58,8 @@
 
 .input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--input-background);
+  border: 1px solid var(--input-border);
   color: white;
   padding: 0.5rem;
   border-radius: 4px;
@@ -73,7 +73,7 @@
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: linear-gradient(to top right, transparent, white 50%);
+  background: var(--focus-indicator);
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -84,8 +84,8 @@
 
 .selectTrigger {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--select-background);
+  border: 1px solid var(--select-border);
   color: white;
   padding: 0.5rem;
   border-radius: 4px;
@@ -96,9 +96,9 @@
 }
 
 .selectContent {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--select-hover);
   backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid var(--select-border);
   width: 100%;
   min-width: 20rem;
   max-width: 20rem;
@@ -116,7 +116,7 @@
 }
 
 .selectItem:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--select-hover);
 }
 
 .selectItemText {
@@ -131,8 +131,8 @@
 
 .button {
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--button-background);
+  border: 1px solid var(--select-border);
   color: white;
   padding: 0.75rem;
   border-radius: 4px;
@@ -140,7 +140,7 @@
 }
 
 .button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--button-hover);
 }
 
 .loader {
@@ -155,5 +155,5 @@
   margin-top: 1.5rem;
   text-align: center;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--footer-text);
 }
