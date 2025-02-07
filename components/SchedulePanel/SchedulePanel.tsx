@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import styles from "@/styles/SchedulePanel.module.css";
 import { Clock, MapPin, User } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
