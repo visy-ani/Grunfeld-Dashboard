@@ -31,6 +31,17 @@ const LoginPage: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
 
+  // Listen for Firebase Auth state changes.
+  // If a user is already logged in, redirect them to the dashboard.
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        router.push("/dashboard");
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     const { name, value } = e.target;
@@ -48,12 +59,11 @@ const LoginPage: React.FC = () => {
       setError("Please fill in all fields");
       return false;
     }
-    // Change validation length as needed (here rollNumber is 5 characters as per your code)
+    // Here, rollNumber must be exactly 5 characters.
     if (formData.rollNumber.length !== 5) {
       setError("Roll Number must be exactly 5 characters");
       return false;
     }
-
     if (!/^\d+$/.test(formData.rollNumber)) {
       setError("Roll Number must contain only numeric digits");
       return false;
@@ -64,7 +74,8 @@ const LoginPage: React.FC = () => {
   const handleGithubLogin = async () => {
     if (!validateForm()) return;
 
-    // Store extra form data in localStorage for use in AuthProvider
+    // (Optional) If you don't need to store the form data in localStorage anymore,
+    // you can remove this line.
     localStorage.setItem("userFormData", JSON.stringify(formData));
 
     setIsLoading(true);
@@ -73,16 +84,15 @@ const LoginPage: React.FC = () => {
       provider.addScope("read:user");
       provider.addScope("user:email");
 
-      // Sign in with popup
+      // Sign in with a popup
       const result = await signInWithPopup(auth, provider);
       const credential = GithubAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
-
       if (!token) {
         throw new Error("No GitHub access token found");
       }
 
-      // Fetch GitHub user data with Authorization header
+      // Fetch GitHub user data with the token
       const response = await fetch("https://api.github.com/user", {
         headers: { Authorization: `token ${token}` },
       });
@@ -93,7 +103,7 @@ const LoginPage: React.FC = () => {
       const githubUsername = data.login;
       console.log("Fetched GitHub Username:", githubUsername);
 
-      // Update Firestore: set the username and construct the github_profile URL
+      // Update the Firestore profile with GitHub details.
       const user = result.user;
       if (user && githubUsername) {
         const userRef = doc(db, "profiles", user.uid);
@@ -103,7 +113,7 @@ const LoginPage: React.FC = () => {
         });
       }
 
-      // Redirect to dashboard after successful login and update
+      // Redirect to the dashboard.
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
@@ -113,8 +123,8 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  // Adjust viewport height for mobile devices.
   useEffect(() => {
-    // Adjust viewport height for mobile if needed.
     const setVh = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty("--vh", `${vh}px`);
