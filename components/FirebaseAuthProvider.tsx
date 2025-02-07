@@ -1,4 +1,3 @@
-// components/AuthProvider.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -45,7 +44,6 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (githubProvider) {
           const githubUsername = githubProvider.uid;
           githubProfileUrl = `https://github.com/${githubUsername}`;
-          console.log("Constructed GitHub Profile URL:", githubProfileUrl);
         }
 
         // Reference to the user's profile document in Firestore.

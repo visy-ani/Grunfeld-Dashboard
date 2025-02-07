@@ -21,7 +21,6 @@ const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ colle
       <div className={styles.scrollContainerWrapper}>
         <div className={styles.scrollContainer}>
           {collection.items.map((item, index) => {
-            // For each badge item, extract its rarity and URL.
             const rarity = Object.keys(item)[0];
             const badgeUrl = item[rarity];
             return (
@@ -32,6 +31,7 @@ const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ colle
                 width={300}
                 height={400}
                 alt={`Badge ${index} (${rarity})`}
+                priority
               />
             );
           })}

@@ -137,11 +137,12 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           <div className={styles.centerColumn}>
             <div className={styles.profileImageWrapper}>
               <Image
-                src={currentUser.profileImage || "https://avatar.iran.liara.run/public"}
+                src={currentUser.profileImage}
                 alt="Profile"
                 width={120}
                 height={120}
                 className={styles.profileImage}
+                priority
               />
             </div>
             <h2 className={styles.profileName}>
