@@ -101,7 +101,6 @@ const LoginPage: React.FC = () => {
       }
       const data = await response.json();
       const githubUsername = data.login;
-      console.log("Fetched GitHub Username:", githubUsername);
 
       // Update the Firestore profile with GitHub details.
       const user = result.user;

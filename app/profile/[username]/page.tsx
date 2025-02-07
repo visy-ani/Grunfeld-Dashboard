@@ -68,7 +68,6 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
         const usersList: User[] = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          console.log(data)
           usersList.push({
             id: doc.id,
             name: data.name,
@@ -82,7 +81,6 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           });
         });
         setUsers(usersList);
-        console.log(usersList);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -139,7 +137,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           <div className={styles.centerColumn}>
             <div className={styles.profileImageWrapper}>
               <Image
-                src={currentUser.profileImage || "/api/placeholder/160/160"}
+                src={currentUser.profileImage || "https://avatar.iran.liara.run/public"}
                 alt="Profile"
                 width={120}
                 height={120}
