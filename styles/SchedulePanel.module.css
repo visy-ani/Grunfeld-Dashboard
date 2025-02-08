@@ -29,6 +29,7 @@
   flex-direction: row;
   overflow-x: auto;
   padding: 1rem;
+  gap: 0.3rem;
 }
 
 .weekButton {
