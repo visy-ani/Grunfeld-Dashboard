@@ -6,7 +6,6 @@ import { Clock, MapPin, User } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { ClassSchedule } from "@/types/types";
 
-// Helper function to format a Date as YYYY-MM-DD
 const formatDateKey = (date: Date): string => {
   return date.toISOString().split("T")[0];
 };
@@ -17,7 +16,6 @@ const SchedulePanel: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [scheduledDates, setScheduledDates] = useState<string[]>([]);
 
-  // Function to fetch classes for a selected date from Supabase
   const fetchScheduledClasses = async (date: Date) => {
     setLoading(true);
     const dateKey = formatDateKey(date);
@@ -117,6 +115,18 @@ const SchedulePanel: React.FC = () => {
     };
   });
 
+  const FormatTime12Hour = (timeStr: string): string => {
+    const [hourStr, minuteStr] = timeStr.split(':');
+    let hour = parseInt(hourStr, 10);
+    const minute = minuteStr;
+    const period = hour >= 12 ? 'PM' : 'AM';
+
+    hour = hour % 12;
+    if (hour === 0) hour = 12;
+    
+    return `${hour}:${minute} ${period}`;
+  };
+
   return (
     <div className={styles.sidePanel}>
       <div className={styles.header}>
@@ -174,7 +184,7 @@ const SchedulePanel: React.FC = () => {
                 </div>
                 <div className={styles.scheduleFooter}>
                   <div className={styles.classTime}>
-                    <Clock size={14} className={styles.icon} /> {cls.time}
+                    <Clock size={14} className={styles.icon} /> {FormatTime12Hour(cls.time)}
                   </div>
                   <div className={styles.classRoom}>
                     <MapPin size={14} className={styles.icon} />{cls.room}

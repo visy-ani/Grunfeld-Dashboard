@@ -2,12 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Bronze from "@/ui/Badges/Common";
+import Common from "@/ui/Badges/Common";
 import { auth, db } from "@/lib/firebaseClient";
 import { doc, getDoc } from "firebase/firestore";
 import styles from "@/styles/Navbar.module.css";
 import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
+import Legendary from "@/ui/Badges/Legendary";
+import Rare from "@/ui/Badges/Rare";
+import Epic from "@/ui/Badges/Epic";
 
 interface Profile {
   id: string;
@@ -22,6 +25,7 @@ interface Profile {
 
 const Navbar: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [rank, setRank] = useState<string>("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -36,9 +40,56 @@ const Navbar: React.FC = () => {
         setProfile(null);
       }
     });
-
     return () => unsubscribe();
   }, []);
+
+  const Rank = (points: number) =>{
+    if( points >= 1000 ){
+      setRank("Director");
+    }
+    else if( points >= 500 ){
+      setRank("Captain");
+    }
+    else if( points >= 200 ){
+      setRank("Avenger");
+    }
+    else{
+      setRank("Trainee");
+    }
+  }
+
+  const getBadgeComponent = (points: number) => {
+    if (points >= 1000) {
+      return (
+        <div className={`${styles.badge} ${styles.legendaryGlow}`}>
+          <Legendary />
+        </div>
+      );
+    }
+    if (points >= 500) {
+      return (
+        <div className={`${styles.badge} ${styles.epicGlow}`}>
+          <Epic />
+        </div>
+      );
+    }
+    if (points >= 200) {
+      return (
+        <div className={`${styles.badge} ${styles.rareGlow}`}>
+          <Rare />
+        </div>
+      );
+    }
+    return (
+      <div className={`${styles.badge} ${styles.commonGlow}`}>
+        <Common />
+      </div>
+    );
+  };
+
+  useEffect(()=>{
+    Rank(profile?.points ?? 0);
+  },[profile])
 
   return (
     <nav className={styles.navbar}>
@@ -71,11 +122,11 @@ const Navbar: React.FC = () => {
           </Link>
           <div className={styles.navProfile}>
             <div className={styles.profileName}>
-              <span className={styles.rank}>Trainee</span>
+              <span className={styles.rank}>{rank}</span>
               <span className={styles.points}>{profile.points} Points</span>
             </div>
             <div className={styles.badge}>
-              <Bronze />
+              {getBadgeComponent(profile.points)}
             </div>
           </div>
         </div>
