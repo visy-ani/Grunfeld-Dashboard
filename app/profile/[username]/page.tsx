@@ -55,9 +55,11 @@ const getBadgeComponent = (points: number) => {
   );
 };
 
+
 const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [rank, setRank] = useState<string>("");
 
   // Fetch all user profiles from Firebase
   useEffect(() => {
@@ -89,16 +91,34 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     fetchUsers();
   }, []);
 
+  const Rank = (points: number) =>{
+    if( points >= 1000 ){
+      setRank("Director");
+    }
+    else if( points >= 500 ){
+      setRank("Captain");
+    }
+    else if( points >= 200 ){
+      setRank("Avenger");
+    }
+    else{
+      setRank("Trainee");
+    }
+  }
+
+  const currentUser = users.find((user) => user.username === username);
+
   useEffect(() => {
     const fetchParams = async () => {
       const resolvedParams = await params;
       setUsername(resolvedParams.username);
     };
 
+    Rank(currentUser?.points ?? 0);
     fetchParams();
-  }, [params]);
+  }, [params, currentUser]);
 
-  const currentUser = users.find((user) => user.username === username);
+
 
   if (!username || !currentUser) return(
     <Loader/>
@@ -109,6 +129,9 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short" };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   }
+
+
+
 
   return (
     <div className={styles.container}>
@@ -124,7 +147,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
               <div className={styles.logoImage}>
                 {getBadgeComponent(currentUser.points)}
               </div>
-              <span className={styles.rankText}>TRAINEE</span>
+              <span className={styles.rankText}>{rank}</span>
             </div>
             <div className={styles.separator} />
             <div className={styles.pointsSection}>
