@@ -10,8 +10,8 @@ import Legendary from "@/ui/Badges/Legendary";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebaseClient";
 import Image from "next/image";
-import About from "@/components/About/About"
-import Collections from '@/components/Collections/Collections'
+import About from "@/components/About/About";
+import Collections from "@/components/Collections/Collections";
 import Loader from "@/ui/Loader";
 
 interface User {
@@ -55,13 +55,41 @@ const getBadgeComponent = (points: number) => {
   );
 };
 
-
 const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
   const [username, setUsername] = useState<string | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [rank, setRank] = useState<string>("");
+  const [wallpaperUrl, setWallpaperUrl] = useState<string>("");
 
-  // Fetch all user profiles from Firebase
+  useEffect(() => {
+    const fetchRandomAbstractWallpaper = async () => {
+      try {
+        const randomPage = Math.floor(Math.random() * 10) + 1;
+        const endpoint = `https://api.pexels.com/v1/search?query=abstract&orientation=landscape&per_page=1&page=${randomPage}`;
+
+        const response = await fetch(endpoint, {
+          headers: {
+            Authorization: process.env.NEXT_PUBLIC_PEXELS_API_KEY!,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch wallpaper");
+        }
+
+        const data = await response.json();
+        if (data.photos && data.photos.length > 0) {
+          const photoUrl = data.photos[0].src.landscape;
+          setWallpaperUrl(photoUrl);
+        }
+      } catch (error) {
+        console.error("Error fetching wallpaper:", error);
+      }
+    };
+
+    fetchRandomAbstractWallpaper();
+  }, []);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -73,13 +101,13 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           usersList.push({
             id: doc.id,
             name: data.name,
-            username: data.username || "", 
+            username: data.username || "",
             rollNumber: data.roll_number,
             academicYear: data.academic_year,
             points: data.points,
             profileImage: data.profile_image,
             githubProfile: data.github_profile,
-            lastLogin: data.lastLogin.seconds
+            lastLogin: data.lastLogin.seconds,
           });
         });
         setUsers(usersList);
@@ -91,20 +119,17 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     fetchUsers();
   }, []);
 
-  const Rank = (points: number) =>{
-    if( points >= 1000 ){
+  const Rank = (points: number) => {
+    if (points >= 1000) {
       setRank("Director");
-    }
-    else if( points >= 500 ){
+    } else if (points >= 500) {
       setRank("Captain");
-    }
-    else if( points >= 200 ){
+    } else if (points >= 200) {
       setRank("Avenger");
-    }
-    else{
+    } else {
       setRank("Trainee");
     }
-  }
+  };
 
   const currentUser = users.find((user) => user.username === username);
 
@@ -118,25 +143,28 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
     fetchParams();
   }, [params, currentUser]);
 
-
-
-  if (!username || !currentUser) return(
-    <Loader/>
-  ) 
+  if (!username || !currentUser) return <Loader />;
 
   const formatLastLogin = (lastLogin: number): string => {
-    const date = new Date(lastLogin * 1000); 
+    const date = new Date(lastLogin * 1000);
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "short" };
     return new Intl.DateTimeFormat("en-US", options).format(date);
-  }
-
-
-
+  };
 
   return (
     <div className={styles.container}>
-      {/* Banner */}
-      <div className={styles.banner}></div>
+      {/* Banner with random wallpaper background */}
+      <div className={styles.banner} style={{ position: "relative", overflow: "hidden" }}>
+        {wallpaperUrl && (
+          <Image
+            src={wallpaperUrl}
+            alt="Random Abstract Wallpaper"
+            fill
+            style={{ objectFit: "cover" }}
+            priority
+          />
+        )}
+      </div>
 
       {/* Main Profile Card */}
       <div className={styles.profileCard}>
@@ -144,9 +172,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
           {/* Left Column */}
           <div className={styles.leftColumn}>
             <div className={styles.logoSection}>
-              <div className={styles.logoImage}>
-                {getBadgeComponent(currentUser.points)}
-              </div>
+              <div className={styles.logoImage}>{getBadgeComponent(currentUser.points)}</div>
               <span className={styles.rankText}>{rank}</span>
             </div>
             <div className={styles.separator} />
@@ -168,12 +194,8 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
                 priority
               />
             </div>
-            <h2 className={styles.profileName}>
-              {currentUser.name.toUpperCase()}
-            </h2>
-            <span className={styles.profileLabel}>
-              {currentUser.rollNumber}
-            </span>
+            <h2 className={styles.profileName}>{currentUser.name.toUpperCase()}</h2>
+            <span className={styles.profileLabel}>{currentUser.rollNumber}</span>
           </div>
 
           {/* Right Column */}
@@ -183,11 +205,7 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
               <span className={styles.joinLabel}> Joined</span>
             </div>
             <div className={styles.separator} />
-            <a
-              href={currentUser.githubProfile}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href={currentUser.githubProfile} target="_blank" rel="noopener noreferrer">
               <button className={styles.githubButton}>
                 <Github className={styles.githubIcon} size={28} />
               </button>
@@ -197,8 +215,8 @@ const Profile = ({ params }: { params: Promise<{ username: string }> }) => {
       </div>
 
       <div className={styles.mainContainer}>
-        <About/>
-        <Collections rollNumber={currentUser.rollNumber}/>
+        <About />
+        <Collections rollNumber={currentUser.rollNumber} />
       </div>
     </div>
   );
