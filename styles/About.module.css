@@ -39,6 +39,23 @@
   word-spacing: 2px;
 }
 
+.loadingText {
+  color: #fff;
+  font-style: italic;
+  text-align: center;
+}
+
+.errorText {
+  color: #ff4d4f;
+  text-align: center;
+}
+
+/* Loader animation */
+.loadingIcon {
+  animation: spin 1s linear infinite;
+  color: #fff;
+}
+
 /* Media Queries */
 @media (max-width: 1024px) {
   .card {
@@ -80,5 +97,15 @@
   }
   .nameText {
     font-size: 0.9rem;
+  }
+}
+
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
