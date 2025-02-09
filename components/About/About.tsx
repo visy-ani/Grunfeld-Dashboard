@@ -2,27 +2,30 @@ import React, { useState, useEffect } from "react";
 import { User, Loader2 } from "lucide-react";
 import styles from "@/styles/About.module.css";
 
-interface AvengerAboutCardProps {
-  width?: string;
-  maxWidth?: string;
-}
-
-const AvengerAboutCard: React.FC<AvengerAboutCardProps> = () => {
-  // State to hold the hero details fetched from the API
+const AvengerAboutCard: React.FC = () => {
   const [hero, setHero] = useState<{
     fakeName: string;
     aboutStory: string;
   } | null>(null);
 
-  // Loading state for the API call (default to true for immediate generation)
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
 
   const generateHero = async () => {
     setLoading(true);
-    try {
-      // Call the API route that now uses the Google Generative AI SDK
-      const res = await fetch("/api/generateAvenger");
+    setProgress(0);
 
+    const intervalId = setInterval(() => {
+      setProgress((prev) => {
+        if (prev < 90) {
+          return prev + 1;
+        }
+        return prev;
+      });
+    }, 100);
+
+    try {
+      const res = await fetch("/api/generateAvenger");
       if (res.ok) {
         const data = await res.json();
         setHero(data);
@@ -32,6 +35,8 @@ const AvengerAboutCard: React.FC<AvengerAboutCardProps> = () => {
     } catch (error) {
       console.error("Error fetching hero data:", error);
     } finally {
+      clearInterval(intervalId);
+      setProgress(100);
       setLoading(false);
     }
   };
@@ -41,25 +46,35 @@ const AvengerAboutCard: React.FC<AvengerAboutCardProps> = () => {
   }, []);
 
   return (
-    <div className={styles.card}>
-      <div className={styles.header}>
+    <div className={styles.cardContainer}>
+      <div className={styles.card}>
+        <div className={styles.header}>
+          <User className={styles.icon} />
+          <h2 className={styles.headerTitle}>About</h2>
+        </div>
+
         {loading ? (
-          <Loader2 className={styles.loadingIcon} size={24} />
-        ) : (
-          <User className={styles.icon} size={24} />
-        )}
-        <h2 className={styles.headerTitle}>About</h2>
-      </div>
-      <div className={styles.content}>
-        {loading ? (
-          <div className={styles.loadingText}>Generating Profile...</div>
+          <div className={styles.loadingContainer}>
+            <Loader2 className={styles.loadingSpinner} />
+            <div className={styles.loadingContent}>
+              <p className={styles.loadingText}>Generating Profile...</p>
+              <div className={styles.loadingBar}>
+                <div
+                  className={styles.loadingBarProgress}
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          </div>
         ) : hero ? (
-          <>
-            <div className={styles.storyText}>{hero.aboutStory}</div>
-            <div className={styles.nameText}>{hero.fakeName}</div>
-          </>
+          <div className={styles.content}>
+            <p className={styles.storyText}>{hero.aboutStory}</p>
+            <p className={styles.nameText}>{hero.fakeName}</p>
+          </div>
         ) : (
-          <div className={styles.errorText}>Failed to load hero profile.</div>
+          <div className={styles.errorContainer}>
+            <p className={styles.errorText}>Failed to load hero profile.</p>
+          </div>
         )}
       </div>
     </div>
