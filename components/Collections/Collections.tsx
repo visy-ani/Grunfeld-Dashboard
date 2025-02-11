@@ -14,19 +14,37 @@ interface MultiCollectionCardProps {
   collections: Collection[];
 }
 
-const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ collection }) => {
+const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({
+  collection,
+}) => {
+  const rarityOrder = ["Common", "Rare", "Epic", "Legendary"];
+
+  const sortedItems = collection.items.sort((a, b) => {
+    const keyA = Object.keys(a)[0]; 
+    const keyB = Object.keys(b)[0];
+
+    return rarityOrder.indexOf(keyA) - rarityOrder.indexOf(keyB);
+  });
+
   return (
     <div className={styles.collectionContainer}>
       <h2 className={styles.collectionTitle}>{collection.name}</h2>
       <div className={styles.scrollContainerWrapper}>
         <div className={styles.scrollContainer}>
-          {collection.items.map((item, index) => {
+          {sortedItems.map((item, index) => {
             const rarity = Object.keys(item)[0];
             const badgeUrl = item[rarity];
+            const glowClasses = [
+              styles.commonGlow,
+              styles.rareGlow,
+              styles.epicGlow,
+              styles.legendaryGlow,
+            ];
+
             return (
               <Image
                 key={index}
-                className={`${styles.item} ${styles.itemglow}`}
+                className={`${styles.item} ${glowClasses[index % 4]}`}
                 src={badgeUrl}
                 width={300}
                 height={400}
@@ -41,7 +59,9 @@ const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ colle
   );
 };
 
-const MultiCollectionCard: React.FC<MultiCollectionCardProps> = ({ collections }) => {
+const MultiCollectionCard: React.FC<MultiCollectionCardProps> = ({
+  collections,
+}) => {
   return (
     <div className={styles.multiCollectionCard}>
       {collections.map((collection, index) => (

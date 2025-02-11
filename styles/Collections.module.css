@@ -54,8 +54,20 @@
   transition: transform 0.3s ease;
 }
 
-.item1glow{
+.commonGlow {
   filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
+}
+
+.rareGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(0, 255, 42, 0.276));
+}
+
+.epicGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(64, 29, 107, 0.584));
+}
+
+.legendaryGlow {
+  filter: blur(0) drop-shadow(0 4px 16px rgba(222, 78, 16, 0.584));
 }
 
 .item:hover {
