@@ -54,6 +54,10 @@
   transition: transform 0.3s ease;
 }
 
+.item1glow{
+  filter: blur(0) drop-shadow(0 4px 16px rgba(43, 0, 255, 0.5));
+}
+
 .item:hover {
   transform: scale(1.05);
 }

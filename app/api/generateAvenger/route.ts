@@ -29,12 +29,7 @@ export async function GET() {
     
     
     const result = await model.generateContent(prompt);
-    const output = result.response.text(); // e.g. might be:
-    // {
-    //   "fakeName": "Nightshade Sentinel",
-    //   "aboutStory": "Dr. Aris Thorne, a brilliant..."
-    // }
-    // Unknown Hero
+    const output = result.response.text();
     
     let data;
     // Attempt to extract the JSON substring from the output:
@@ -46,14 +41,12 @@ export async function GET() {
         data = JSON.parse(jsonStr);
       } catch (parseError) {
         console.error("Error parsing JSON substring:", parseError);
-        // Fallback if JSON parsing fails:
         data = {
           fakeName: "Unknown Hero",
           aboutStory: output,
         };
       }
     } else {
-      // Fallback if no valid JSON is found
       data = {
         fakeName: "Unknown Hero",
         aboutStory: output,

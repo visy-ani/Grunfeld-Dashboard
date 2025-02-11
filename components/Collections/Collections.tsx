@@ -26,7 +26,7 @@ const CollectionScrollContainer: React.FC<{ collection: Collection }> = ({ colle
             return (
               <Image
                 key={index}
-                className={styles.item}
+                className={`${styles.item} ${styles.itemglow}`}
                 src={badgeUrl}
                 width={300}
                 height={400}
