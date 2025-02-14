@@ -10,12 +10,29 @@ export default function AttendanceButton() {
       setStatus('Geolocation is not supported by your browser.');
       return;
     }
-
+  
+    setStatus('Getting your location...');
+  
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
-        console.log(`Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}`);
-        setStatus(`Current location: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+        
+        try {
+          const response = await fetch(`/api/classLocation?latitude=${latitude}&longitude=${longitude}`);
+          const data = await response.json();
+  
+          if (data.success) {
+            if (data.data.isWithinRange) {
+              setStatus(`✅ Attendance marked! ${data.data.distanceMessage}`);
+            } else {
+              setStatus(`❌ You're too far from class. ${data.data.distanceMessage}`);
+            }
+          } else {
+            setStatus(`Error: ${data.error}`);
+          }
+        } catch (error) {
+          setStatus(`Failed to verify location: ${error}`);
+        }
       },
       (error) => {
         setStatus('Unable to retrieve location: ' + error.message);
