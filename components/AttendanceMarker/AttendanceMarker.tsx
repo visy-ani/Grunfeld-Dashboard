@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 
 export default function AttendanceButton() {
   const [status, setStatus] = useState('');
@@ -13,19 +12,10 @@ export default function AttendanceButton() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      async (position) => {
+      (position) => {
         const { latitude, longitude } = position.coords;
-
-        try {
-          const response = await axios.post('/api/markAttendance', {
-            latitude,
-            longitude,
-          });
-          setStatus(response.data.message);
-          console.log(latitude, longitude)
-        } catch (error) {
-          setStatus('Error marking attendance: ' + error);
-        }
+        console.log(`Latitude: ${latitude.toFixed(6)}, Longitude: ${longitude.toFixed(6)}`);
+        setStatus(`Current location: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
       },
       (error) => {
         setStatus('Unable to retrieve location: ' + error.message);
@@ -33,7 +23,6 @@ export default function AttendanceButton() {
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
-
 
   return (
     <div>
