@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { Geodesic } from 'geographiclib-geodesic';
+ 
 
 // Store single class location in memory
 let classLocation = {
@@ -9,57 +11,48 @@ let classLocation = {
   toleranceMeters: 20 // Default tolerance of 20 meters
 };
 
-// Vincenty's formula for precise distance calculation
+// Function to calculate distance using GeographicLib (Karney’s Algorithm)
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const a = 6378137.0; // Semi-major axis (meters)
-  const f = 1 / 298.257223563; // Flattening
-  const b = (1 - f) * a;
+  const geod = Geodesic.WGS84;
+  const result = geod.Inverse(lat1, lon1, lat2, lon2);
+  return result.s12 ?? 0; // Distance in meters
+}
 
-  const φ1 = lat1 * (Math.PI / 180);
-  const φ2 = lat2 * (Math.PI / 180);
-  const L = (lon2 - lon1) * (Math.PI / 180);
+// Function to average multiple GPS readings for accuracy
+function averageCoordinates(locations: { latitude: number; longitude: number }[]): { latitude: number; longitude: number } {
+  const sum = locations.reduce(
+    (acc, loc) => {
+      acc.latitude += loc.latitude;
+      acc.longitude += loc.longitude;
+      return acc;
+    },
+    { latitude: 0, longitude: 0 }
+  );
 
-  const U1 = Math.atan((1 - f) * Math.tan(φ1));
-  const U2 = Math.atan((1 - f) * Math.tan(φ2));
-  const sinU1 = Math.sin(U1), cosU1 = Math.cos(U1);
-  const sinU2 = Math.sin(U2), cosU2 = Math.cos(U2);
-
-  let λ = L, λPrev, iterations = 0;
-  let sinλ, cosλ, sinσ, cosσ, σ, sinα, cos2α, C;
-
-  do {
-    sinλ = Math.sin(λ);
-    cosλ = Math.cos(λ);
-    sinσ = Math.sqrt((cosU2 * sinλ) ** 2 + (cosU1 * sinU2 - sinU1 * cosU2 * cosλ) ** 2);
-    if (sinσ === 0) return 0; // Coincident points
-    cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ;
-    σ = Math.atan2(sinσ, cosσ);
-    sinα = cosU1 * cosU2 * sinλ / sinσ;
-    cos2α = 1 - sinα ** 2;
-    C = (f / 16) * cos2α * (4 + f * (4 - 3 * cos2α));
-    λPrev = λ;
-    λ = L + (1 - C) * f * sinα * (σ + C * sinσ * (cos2α + C * cosσ * (-1 + 2 * cos2α ** 2)));
-  } while (Math.abs(λ - λPrev) > 1e-12 && ++iterations < 100);
-
-  const u2 = cos2α * ((a ** 2 - b ** 2) / (b ** 2));
-  const A = 1 + (u2 / 16384) * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
-  const B = (u2 / 1024) * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
-  const Δσ = B * sinσ * (cosσ + (B / 4) * (cos2α * (-1 + 2 * cosσ ** 2) - (B / 6) * cosσ * (-3 + 4 * sinσ ** 2) * (-3 + 4 * cos2α ** 2)));
-
-  return b * A * (σ - Δσ); // Distance in meters
+  const count = locations.length;
+  return { latitude: sum.latitude / count, longitude: sum.longitude / count };
 }
 
 // GET endpoint verifies user location against stored class location
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
-    const userLat = parseFloat(url.searchParams.get('latitude') || '');
-    const userLong = parseFloat(url.searchParams.get('longitude') || '');
+    const rawLocations = url.searchParams.get('locations'); // Expecting JSON string
 
-    if (isNaN(userLat) || isNaN(userLong)) {
-      return NextResponse.json({ success: false, error: 'Invalid user coordinates provided' }, { status: 400 });
+    if (!rawLocations) {
+      return NextResponse.json({ success: false, error: 'Missing location data' }, { status: 400 });
     }
 
+    const locations: { latitude: number; longitude: number }[] = JSON.parse(rawLocations);
+
+    if (!Array.isArray(locations) || locations.length < 3) {
+      return NextResponse.json({ success: false, error: 'Provide at least 3 location readings' }, { status: 400 });
+    }
+
+    // Get the averaged coordinates
+    const { latitude: userLat, longitude: userLong } = averageCoordinates(locations);
+
+    // Calculate distance from class location
     const distance = calculateDistance(
       userLat,
       userLong,
