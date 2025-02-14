@@ -9,39 +9,57 @@ let classLocation = {
   toleranceMeters: 20 // Default tolerance of 20 meters
 };
 
-// Haversine formula to calculate distance between two points
+// Vincenty's formula for precise distance calculation
 function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371000; // Earth's radius in meters
-  const φ1 = lat1 * Math.PI/180;
-  const φ2 = lat2 * Math.PI/180;
-  const Δφ = (lat2-lat1) * Math.PI/180;
-  const Δλ = (lon2-lon1) * Math.PI/180;
+  const a = 6378137.0; // Semi-major axis (meters)
+  const f = 1 / 298.257223563; // Flattening
+  const b = (1 - f) * a;
 
-  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-          Math.cos(φ1) * Math.cos(φ2) *
-          Math.sin(Δλ/2) * Math.sin(Δλ/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const φ1 = lat1 * (Math.PI / 180);
+  const φ2 = lat2 * (Math.PI / 180);
+  const L = (lon2 - lon1) * (Math.PI / 180);
 
-  return R * c; // Distance in meters
+  const U1 = Math.atan((1 - f) * Math.tan(φ1));
+  const U2 = Math.atan((1 - f) * Math.tan(φ2));
+  const sinU1 = Math.sin(U1), cosU1 = Math.cos(U1);
+  const sinU2 = Math.sin(U2), cosU2 = Math.cos(U2);
+
+  let λ = L, λPrev, iterations = 0;
+  let sinλ, cosλ, sinσ, cosσ, σ, sinα, cos2α, C;
+
+  do {
+    sinλ = Math.sin(λ);
+    cosλ = Math.cos(λ);
+    sinσ = Math.sqrt((cosU2 * sinλ) ** 2 + (cosU1 * sinU2 - sinU1 * cosU2 * cosλ) ** 2);
+    if (sinσ === 0) return 0; // Coincident points
+    cosσ = sinU1 * sinU2 + cosU1 * cosU2 * cosλ;
+    σ = Math.atan2(sinσ, cosσ);
+    sinα = cosU1 * cosU2 * sinλ / sinσ;
+    cos2α = 1 - sinα ** 2;
+    C = (f / 16) * cos2α * (4 + f * (4 - 3 * cos2α));
+    λPrev = λ;
+    λ = L + (1 - C) * f * sinα * (σ + C * sinσ * (cos2α + C * cosσ * (-1 + 2 * cos2α ** 2)));
+  } while (Math.abs(λ - λPrev) > 1e-12 && ++iterations < 100);
+
+  const u2 = cos2α * ((a ** 2 - b ** 2) / (b ** 2));
+  const A = 1 + (u2 / 16384) * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
+  const B = (u2 / 1024) * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
+  const Δσ = B * sinσ * (cosσ + (B / 4) * (cos2α * (-1 + 2 * cosσ ** 2) - (B / 6) * cosσ * (-3 + 4 * sinσ ** 2) * (-3 + 4 * cos2α ** 2)));
+
+  return b * A * (σ - Δσ); // Distance in meters
 }
 
-// GET endpoint now verifies user location against stored class location
+// GET endpoint verifies user location against stored class location
 export async function GET(req: Request) {
   try {
-    // Get user's location from URL parameters
     const url = new URL(req.url);
     const userLat = parseFloat(url.searchParams.get('latitude') || '');
     const userLong = parseFloat(url.searchParams.get('longitude') || '');
 
-    // Validate user coordinates
     if (isNaN(userLat) || isNaN(userLong)) {
-      return NextResponse.json({
-        success: false,
-        error: 'Invalid user coordinates provided'
-      }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Invalid user coordinates provided' }, { status: 400 });
     }
 
-    // Calculate distance between user and class location
     const distance = calculateDistance(
       userLat,
       userLong,
@@ -49,28 +67,21 @@ export async function GET(req: Request) {
       classLocation.coordinates.longitude
     );
 
-    // Check if user is within acceptable range
     const isWithinRange = distance <= classLocation.toleranceMeters;
 
     return NextResponse.json({
       success: true,
       data: {
         isWithinRange,
-        distance: Math.round(distance * 100) / 100, 
+        distance: Math.round(distance * 100) / 100,
         distanceMessage: `You are ${Math.round(distance)} meters from the class location`,
-        userCoordinates: {
-          latitude: userLat,
-          longitude: userLong
-        },
+        userCoordinates: { latitude: userLat, longitude: userLong },
         classCoordinates: classLocation.coordinates,
         toleranceMeters: classLocation.toleranceMeters
       }
     });
   } catch (error) {
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to verify location' + error
-    }, { status: 500 });
+    return NextResponse.json({ success: false, error: 'Failed to verify location: ' + error }, { status: 500 });
   }
 }
 
@@ -79,20 +90,12 @@ export async function POST(req: Request) {
   try {
     const { latitude, longitude, toleranceMeters } = await req.json();
 
-    // Validate coordinates
     if (typeof latitude !== 'number' || typeof longitude !== 'number') {
-      return NextResponse.json(
-        { success: false, error: 'Invalid latitude or longitude' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid latitude or longitude' }, { status: 400 });
     }
 
-    // Update the stored location
     classLocation = {
-      coordinates: {
-        latitude,
-        longitude
-      },
+      coordinates: { latitude, longitude },
       toleranceMeters: typeof toleranceMeters === 'number' ? toleranceMeters : 20
     };
 
@@ -103,12 +106,6 @@ export async function POST(req: Request) {
     });
 
   } catch (error) {
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to update class location: ' + error
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: 'Failed to update class location: ' + error }, { status: 500 });
   }
 }
