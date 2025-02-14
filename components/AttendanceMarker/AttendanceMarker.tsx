@@ -43,30 +43,36 @@ export default function AttendanceButton() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        console.log('Received Latitude:', latitude);
+        console.log('Received Longitude:', longitude);
+        
         const distance = getDistance(
           latitude, longitude, 
           assignedLocation.latitude, assignedLocation.longitude
         );
-
+        console.log('Calculated Distance:', distance);
+    
         if (distance > assignedLocation.tolerance) {
           setStatus('Error: You are not at the assigned location.');
           return;
         }
-
+    
         try {
           const response = await axios.post('/api/markAttendance', {
             name: 'John Doe', 
             latitude, 
             longitude
           });
-
           setStatus(response.data.message);
         } catch (error) {
           setStatus('Error marking attendance: ' + error);
         }
       },
-      () => setStatus('Unable to retrieve location.')
-    );
+      (error) => {
+        setStatus('Unable to retrieve location: ' + error.message);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );    
   };
 
   // Only render the button if on the client side
