@@ -166,7 +166,7 @@ export async function POST(req: Request) {
 
     classLocation = {
       coordinates: { latitude, longitude },
-      toleranceMeters: typeof toleranceMeters === 'number' ? toleranceMeters : 20
+      toleranceMeters: typeof toleranceMeters === 'number' ? toleranceMeters : 2000
     };
 
     return NextResponse.json({
