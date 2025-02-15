@@ -39,8 +39,9 @@ export async function POST(request: Request) {
       rollNumber: userData.roll_number || "No Roll Number"
     };
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const attendanceUrl = new URL('/api/attendance', baseUrl);
+
 
     let attendanceResult;
     try {
@@ -49,7 +50,6 @@ export async function POST(request: Request) {
       });
       attendanceResult = axiosResponse.data;
     } catch (error) {
-      // Check if the error is an AxiosError
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.data) {
           return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { valid: false, message: 'Invalid request. ' + error.message },
+        { valid: false, message: 'Invalid request. ' + error.message + "abs" },
         { status: 400 }
       );
     }
