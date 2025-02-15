@@ -1,0 +1,178 @@
+.card {
+  width: 100%;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .title {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .title {
+    font-size: 1rem;
+  }
+}
+
+/* Input Section */
+.inputSection {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .inputSection {
+    gap: 0.75rem;
+  }
+}
+
+.inputWrapper {
+  position: relative;
+  flex: 1;
+}
+
+/* Input Field */
+.input {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #1f293780;
+  border: 1px solid #374151;
+  border-radius: .75rem;
+  color: #ffffff;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .input {
+    font-size: 1rem;
+  }
+}
+
+.input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px #4299e1; 
+}
+
+/* Button */
+.button {
+  padding: 0.4rem 0.8rem;
+  background-color: #2563eb; 
+  color: #ffffff;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6rem;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .button {
+    padding: 0.4rem 1rem;
+    min-width: 6.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button:disabled {
+  background-color: #1e40af; 
+  cursor: not-allowed;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.buttonContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Spinner */
+.spinner {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 2px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Message Section */
+.message {
+  text-align: center;
+  padding: 0.4rem;
+  background-color: #1f293780;
+  border: 1px solid #374151;
+  border-radius: .75rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .message {
+    padding: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+.textBlue {
+  color: #63b3ed;
+}
+
+.textGreen {
+  color: #68d391; 
+}
+
+.textRed {
+  color: #f56565;
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+

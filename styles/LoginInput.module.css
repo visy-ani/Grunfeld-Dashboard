@@ -7,22 +7,23 @@
   position: relative;
   width: 100%;
   transition: all 0.3s ease-in-out;
-  z-index: 1; /* Ensure it's not hidden behind other elements */
+  z-index: 1; 
 }
 
 .inputField {
   display: block;
   width: 100%;
   padding: 12px 16px;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: #ffffff0d;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
   color: white;
   transition: all 0.3s ease-in-out;
   outline: none;
   backdrop-filter: blur(4px);
-  position: relative; /* Ensure the input is positioned properly */
-  z-index: 2; /* Bring input above other elements */
+  -webkit-backdrop-filter: blur(4px);
+  position: relative;
+  z-index: 2;
 }
 
 .inputField::placeholder {
@@ -46,7 +47,7 @@
   transition: all 0.2s ease-in-out;
   pointer-events: none;
   color: rgba(255, 255, 255, 0.4);
-  z-index: 0; /* Ensure the label is not on top of the input */
+  z-index: 0; 
 }
 
 .labelFocused {
@@ -67,7 +68,7 @@
   transform: translateY(-50%);
   color: rgba(255, 255, 255, 0.4);
   transition: color 0.3s ease-in-out;
-  z-index: 2; /* Make sure icon is above other elements */
+  z-index: 2;
 }
 
 .iconFocused {
@@ -85,7 +86,6 @@
   transition: all 0.3s ease-in-out;
 }
 
-/* Ensure input field is clickable */
 .inputField, .inputWrapper {
   pointer-events: auto;
 }

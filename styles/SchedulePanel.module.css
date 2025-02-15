@@ -163,9 +163,12 @@
   
 
 @media (max-width: 768px) {
+  .sidePanel{
+    min-height: calc(100vh - 90px);
+  }
   .scheduleContainer{
     flex: none;
-    min-height: calc(100vh - 26rem);
+    min-height: calc(100vh - 28rem);
   }
   .weekButton{
     height: 4.5rem;

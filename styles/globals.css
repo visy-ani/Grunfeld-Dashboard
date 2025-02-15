@@ -10,35 +10,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #fff;
     --login-background: black;
     --foreground: #ededed;
     --card-background: #1f293780;
     --card-border: #374151;
     --loginBox: rgba(255, 255, 255, 0.05);
     --loginBox-border: rgba(255, 255, 255, 0.2);
-
-    /* Login Page */
-    --vh: 1vh;
-    --background: #121212;
-    --login-background: rgba(0, 0, 0, 0.8);
-    --loginText-gradient: linear-gradient(to right, white, rgba(255, 255, 255, 0.5));
-    --loginSubText: rgba(255, 255, 255, 0.6);
-    --loginBox: rgba(255, 255, 255, 0.1);
-    --loginBox-shadow: rgba(0, 0, 0, 0.5);
-    --loginBox-border: rgba(255, 255, 255, 0.2);
-    --alert-background: rgba(255, 0, 0, 0.2);
-    --alert-border: rgba(255, 0, 0, 0.5);
-    --alert-text: #ff4d4d;
-    --input-background: rgba(255, 255, 255, 0.05);
-    --input-border: rgba(255, 255, 255, 0.2);
-    --focus-indicator: linear-gradient(to top right, transparent, white 50%);
-    --select-background: rgba(255, 255, 255, 0.05);
-    --select-border: rgba(255, 255, 255, 0.2);
-    --select-hover: rgba(255, 255, 255, 0.1);
-    --button-background: rgba(255, 255, 255, 0.1);
-    --button-hover: rgba(255, 255, 255, 0.2);
-    --footer-text: rgba(255, 255, 255, 0.4);
   }
 }
 

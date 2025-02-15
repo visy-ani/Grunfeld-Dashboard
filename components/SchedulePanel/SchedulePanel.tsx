@@ -5,6 +5,7 @@ import styles from "@/styles/SchedulePanel.module.css";
 import { Clock, MapPin, User } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { ClassSchedule } from "@/types/types";
+import AttendanceButton from "@/components/AttendanceButton/AttendanceButton";
 import Link from "next/link";
 
 const formatDateKey = (date: Date): string => {
@@ -198,6 +199,7 @@ const SchedulePanel: React.FC = () => {
       </div>
 
       <div className={styles.viewAllContainer}>
+        <AttendanceButton/>
         <Link href='/library' className={styles.viewAllButton}>View All Classes</Link>
       </div>
     </div>

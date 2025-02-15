@@ -135,12 +135,14 @@ const SearchPanel: React.FC = () => {
           filters.pointsRanges.length === 0 ||
           filters.pointsRanges.some((range) => {
             switch (range) {
-              case "low":
-                return user.points < 1000;
-              case "medium":
-                return user.points >= 1000 && user.points < 1200;
-              case "high":
-                return user.points >= 1200;
+              case "Common":
+                return user.points < 200;
+              case "Rare":
+                return user.points >= 200 && user.points < 500;
+              case "Epic":
+                return user.points >= 500 && user.points < 1000;
+              case "Legendary":
+                return user.points >= 1000;
               default:
                 return false;
             }
@@ -190,7 +192,7 @@ const SearchPanel: React.FC = () => {
             </div>
             <div className={styles.filterSection}>
               <h4>Points Range</h4>
-              {["low", "medium", "high"].map((range) => (
+              {["Common", "Rare", "Epic", "Legendary"].map((range) => (
                 <label key={range} className={styles.filterOption}>
                   <Checkbox
                     className={styles.checkbox}

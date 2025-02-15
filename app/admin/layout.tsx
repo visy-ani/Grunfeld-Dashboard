@@ -27,7 +27,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <div style={{ padding: '2rem', textAlign: 'center', background: '#0a0a0a', color: 'white' }}>
         Loading admin panel...
       </div>
     );

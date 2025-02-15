@@ -31,8 +31,6 @@ const LoginPage: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
 
-  // Listen for Firebase Auth state changes.
-  // If a user is already logged in, redirect them to the dashboard.
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -59,7 +57,6 @@ const LoginPage: React.FC = () => {
       setError("Please fill in all fields");
       return false;
     }
-    // Here, rollNumber must be exactly 5 characters.
     if (formData.rollNumber.length !== 5) {
       setError("Roll Number must be exactly 5 characters");
       return false;
@@ -74,17 +71,12 @@ const LoginPage: React.FC = () => {
   const handleGithubLogin = async () => {
     if (!validateForm()) return;
 
-    // (Optional) If you don't need to store the form data in localStorage anymore,
-    // you can remove this line.
-    localStorage.setItem("userFormData", JSON.stringify(formData));
-
     setIsLoading(true);
     try {
       const provider = new GithubAuthProvider();
       provider.addScope("read:user");
       provider.addScope("user:email");
 
-      // Sign in with a popup
       const result = await signInWithPopup(auth, provider);
       const credential = GithubAuthProvider.credentialFromResult(result);
       const token = credential?.accessToken;
@@ -92,7 +84,6 @@ const LoginPage: React.FC = () => {
         throw new Error("No GitHub access token found");
       }
 
-      // Fetch GitHub user data with the token
       const response = await fetch("https://api.github.com/user", {
         headers: { Authorization: `token ${token}` },
       });
@@ -102,7 +93,6 @@ const LoginPage: React.FC = () => {
       const data = await response.json();
       const githubUsername = data.login;
 
-      // Update the Firestore profile with GitHub details.
       const user = result.user;
       if (user && githubUsername) {
         const userRef = doc(db, "profiles", user.uid);
@@ -112,7 +102,6 @@ const LoginPage: React.FC = () => {
         });
       }
 
-      // Redirect to the dashboard.
       router.push("/dashboard");
     } catch (err) {
       console.error(err);
@@ -122,7 +111,6 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Adjust viewport height for mobile devices.
   useEffect(() => {
     const setVh = () => {
       const vh = window.innerHeight * 0.01;

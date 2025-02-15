@@ -1,9 +1,9 @@
 .container {
-  height: calc(var(--vh) * 100);
-  background: var(--background);
+  height: calc(1vh * 100);
+  background: #121212;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; 
   justify-content: center;
   position: relative;
   overflow: hidden;
@@ -12,7 +12,7 @@
 .background {
   position: absolute;
   inset: 0;
-  background: var(--login-background);
+  background: rgba(0, 0, 0, 0.8);
 }
 
 .header {
@@ -24,31 +24,31 @@
 .title {
   font-size: 3rem;
   font-weight: bold;
-  background: var(--loginText-gradient);
+  background: linear-gradient(to right, white, rgba(255, 255, 255, 0.5));
   -webkit-background-clip: text;
   color: transparent;
 }
 
 .subtitle {
-  color: var(--loginSubText);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .loginBox {
   position: relative;
-  background: var(--loginBox);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 2rem;
   width: 24rem;
-  box-shadow: 0px 4px 10px var(--loginBox-shadow);
-  border: 1px solid var(--loginBox-border);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .alert {
   margin-bottom: 1.5rem;
-  background: var(--alert-background);
-  border-color: var(--alert-border);
-  color: var(--alert-text);
+  background: rgba(255, 0, 0, 0.2);
+  border-color: rgba(255, 0, 0, 0.5);
+  color: #ff4d4d;
 }
 
 .inputGroup {
@@ -58,8 +58,8 @@
 
 .input {
   width: 100%;
-  background: var(--input-background);
-  border: 1px solid var(--input-border);
+  background:  rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   padding: 0.5rem;
   border-radius: 4px;
@@ -73,7 +73,7 @@
   height: 16px;
   width: 16px;
   border-radius: 50%;
-  background: var(--focus-indicator);
+  background: linear-gradient(to top right, transparent, white 50%);
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -84,8 +84,8 @@
 
 .selectTrigger {
   width: 100%;
-  background: var(--select-background);
-  border: 1px solid var(--select-border);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   padding: 0.5rem;
   border-radius: 4px;
@@ -96,9 +96,9 @@
 }
 
 .selectContent {
-  background: var(--select-hover);
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(5px);
-  border: 1px solid var(--select-border);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
   min-width: 20rem;
   max-width: 20rem;
@@ -116,7 +116,7 @@
 }
 
 .selectItem:hover {
-  background: var(--select-hover);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .selectItemText {
@@ -129,31 +129,9 @@
   margin-left: 0.5rem;
 }
 
-.button {
-  width: 100%;
-  background: var(--button-background);
-  border: 1px solid var(--select-border);
-  color: white;
-  padding: 0.75rem;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.button:hover {
-  background: var(--button-hover);
-}
-
-.loader {
-  margin-right: 0.5rem;
-}
-
-.icon {
-  margin-right: 0.5rem;
-}
-
 .footer {
   margin-top: 1.5rem;
   text-align: center;
   font-size: 0.875rem;
-  color: var(--footer-text);
+  color: rgba(255, 255, 255, 0.4);
 }
